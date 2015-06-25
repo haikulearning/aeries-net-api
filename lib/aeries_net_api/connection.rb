@@ -8,12 +8,10 @@ module AeriesNetApi
   class Connection
 
     CONFIGURATION_FILE = 'aeries_net_api_config.yml'
-    attr_accessor :aeries_certificate
-
-    attr_accessor :aeries_url
+    attr_accessor :aeries_certificate, :aeries_url
 
     # Creates a new connection to Aeries site and optionally pass  connection parameters
-    #
+    # ToDo:  Create documentation
     def initialize(connection_parameters={})
 
       self.aeries_certificate=connection_parameters.delete(:certificate)
@@ -28,6 +26,8 @@ module AeriesNetApi
                                             :ssl => {:verify => false})
     end
 
+    #ToDo: Create array of School when no School code is given
+    #ToDo: Transform terms into an array of Term when this class is done.
     def schools(school_code=nil)
       data=get_data("/aeries.net/api/v2/schools/#{school_code}")
       unless school_code.nil?

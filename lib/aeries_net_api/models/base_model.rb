@@ -1,3 +1,6 @@
+# ToDo:  create documentation
+# ToDo: Create tests for underscore and parse methods.
+
 module AeriesNetApi
   module Models
     class BaseModel

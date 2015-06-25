@@ -1,4 +1,6 @@
 require 'rspec'
+# ToDo: add specs to test handling of response errors.
+# ToDo: add specs to test connectivity
 
 describe AeriesNetApi::Connection do
 
@@ -39,19 +41,20 @@ describe AeriesNetApi::Connection do
 
   describe 'methods' do
 
-    let(:connection) {AeriesNetApi::Connection.new(:certificate=>RSpec.configuration.aeries_certificate, :url=>RSpec.configuration.aeries_url)}
+    let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
     it 'should include a schools method' do
       expect(connection.respond_to?(:schools)).to be true
     end
+    context 'school' do
+      it 'should return school information for a given id' do
+        expect(connection.schools(1)).to be_an_instance_of(AeriesNetApi::Models::School)
+      end
 
-    it 'should return school information for a given id' do
-      expect(connection.schools(1)).to be_an_instance_of(AeriesNetApi::Models::School)
-    end
-
-    it 'should return a list of schools when an id was not given' do
-      schools=connection.schools()
-      expect(schools).to be_an_instance_of(Array)
-      expect(schools.first).to be_an_instance_of(AeriesNetApi::Models::School)
+      it 'should return a list of schools when an id was not given' do
+        schools=connection.schools()
+        expect(schools).to be_an_instance_of(Array)
+        expect(schools.first).to be_an_instance_of(AeriesNetApi::Models::School)
+      end
     end
   end
 end
