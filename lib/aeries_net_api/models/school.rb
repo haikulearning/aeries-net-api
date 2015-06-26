@@ -8,12 +8,7 @@ module AeriesNetApi
       @@aeries_attributes_list= %w{SchoolCode Name InactiveStatusCode Address AddressCity AddressState AddressZipCode AddressZipExt DoNotReport StateCountyID StateDistrictID
            StateSchoolID LowGradeLevel HighGradeLevel Terms}
 
-      @@setters_list = @@aeries_attributes_list.map { |attribute| "#{self.underscore(attribute)}=".to_sym }
-
-      @@setters_list.each do |attribute|
-        # removes '=' from attribute name
-        attr_accessor attribute[0..-2]
-      end
+      @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
 
       puts "executing ****"
 # ToDo: End of code to test for running once.

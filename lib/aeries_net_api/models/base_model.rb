@@ -13,11 +13,16 @@ module AeriesNetApi
         end
       end
 
-      # Overrides 'inspect' method to show only dynamically created attributes corresponding to Aeries attributes
-      def model_inspect(setters_list)
-        attributes_list=self.model_attributes(setters_list)
-        "#<#{self.class}:0x#{sprintf('%014x',self.object_id<<1)} #{attributes_list.inspect}>"
+      def self. process_aeries_attributes(aeries_attributes)
+        return_list=aeries_attributes.map { |attribute| "#{self.underscore(attribute)}=".to_sym }
+
+        return_list.each do |attribute|
+          # removes '=' from attribute name
+          attr_accessor attribute[0..-2]
+        end
+        return_list
       end
+      protected
 
       # Returns hash with attributes and values
       def model_attributes(setters_list)
@@ -30,9 +35,13 @@ module AeriesNetApi
         attributes
       end
 
-      protected
+      # Overrides 'inspect' method to show only dynamically created attributes corresponding to Aeries attributes
+      def model_inspect(setters_list)
+        attributes_list=self.model_attributes(setters_list)
+        "#<#{self.class}:0x#{sprintf('%014x',self.object_id<<1)} #{attributes_list.inspect}>"
+      end
 
-      # Convert Camel case words into undersocre separated words.
+      # Convert Camel case words into underscore separated words.
       # Example: underscore 'SchoolName'  =>  school_name
       def self.underscore(camel_case_word)
         camel_case_word.gsub(/::/, '/').
