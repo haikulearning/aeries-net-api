@@ -22,6 +22,7 @@ module AeriesNetApi
         end
         return_list
       end
+
       protected
 
       # Returns hash with attributes and values

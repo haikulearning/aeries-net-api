@@ -11,7 +11,7 @@ module AeriesNetApi
       @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
 
       puts "executing ****"
-# ToDo: End of code to test for running once.
+      # ToDo: End of code to test for running once.
 
       def initialize(aeries_data=nil)
         parse(aeries_data, @@aeries_attributes_list, @@setters_list) if aeries_data.present?
@@ -25,6 +25,7 @@ module AeriesNetApi
       def attributes
         model_attributes(@@setters_list)
       end
+
     end
   end
 end
