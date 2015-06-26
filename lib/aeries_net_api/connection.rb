@@ -3,7 +3,6 @@ require 'yaml'
 require 'faraday'
 require 'json'
 
-
 module AeriesNetApi
   class Connection
 
@@ -20,22 +19,20 @@ module AeriesNetApi
       load_configuration_file if self.aeries_certificate.blank? || self.aeries_url.blank?
       raise ArgumentError, 'Please supply :certificate parameter' if aeries_certificate.nil?
       raise ArgumentError, 'Please supply :url parameter' if aeries_url.nil?
-      @connection = Faraday::Connection.new(self.aeries_url,
-                                            :headers => {:'AERIES-CERT' => '477abe9e7d27439681d62f4e0de1f5e1',
-                                                         :accept => 'application/json, text/html, application/xhtml+xml, */*'},
-                                            :ssl => {:verify => false})
+      @connection = Faraday::Connection.new(self.aeries_url,:headers => {:'AERIES-CERT' => aeries_certificate,
+         :accept => 'application/json, text/html, application/xhtml+xml, */*'}, :ssl => {:verify => false})
     end
 
     #ToDo: Create array of School when no School code is given
-    #ToDo: Transform terms into an array of Term when this class is done.
+    #ToDo: Transform terms into an array of Term when this class be done.
     def schools(school_code=nil)
-      data=get_data("/aeries.net/api/v2/schools/#{school_code}")
+      data=get_data("api/v2/schools/#{school_code}")
+      puts data
       unless school_code.nil?
         model=AeriesNetApi::Models::School.new(data)
       else
         schools=[]
       end
-
     end
 
     private
@@ -49,6 +46,10 @@ module AeriesNetApi
       JSON.parse(response.body)
     end
 
+    # Load parameters from configuration file 'aeries_net_api_config.yml'.  File must be located in working directory.
+    # Configuration parameters:
+    # certificate - Aeries certificate, case sensitive
+    # url         - Aeries
     def load_configuration_file
       begin
         raw_config = File.read(File.join(Dir.pwd, AeriesNetApi::Connection::CONFIGURATION_FILE))
