@@ -23,15 +23,21 @@ module AeriesNetApi
          :accept => 'application/json, text/html, application/xhtml+xml, */*'}, :ssl => {:verify => false})
     end
 
-    #ToDo: Create array of School when no School code is given
     #ToDo: Transform terms into an array of Term when this class be done.
+    # Get school(s) information.
+    # Parameters:
+    # school_code  - optional.  If not given info for all schools will be retrieved.
+
     def schools(school_code=nil)
       data=get_data("api/v2/schools/#{school_code}")
-      puts data
       unless school_code.nil?
         model=AeriesNetApi::Models::School.new(data)
       else
-        schools=[]
+        models=[]
+        data.each do |school_data|
+          models << AeriesNetApi::Models::School.new(school_data)
+        end
+        models
       end
     end
 
