@@ -43,15 +43,22 @@ describe AeriesNetApi::Connection do
 
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
 
-    it 'should include a schools method' do
-      expect(connection.respond_to?(:schools)).to be true
-    end
-
     context 'school' do
+      it 'should include a schools method' do
+        expect(connection.respond_to?(:schools)).to be true
+      end
+
       it 'should return school information for a given id' do
         school=connection.schools(1)
         # puts school.inspect
         expect(school).to be_an_instance_of(AeriesNetApi::Models::School)
+      end
+
+      it 'school should include an array of terms' do
+        school=connection.schools(1)
+        # puts school.inspect
+        expect(school.terms).to be_an_instance_of(Array)
+        expect(school.terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
       end
 
       it 'should return a list of schools when an id was not given' do
@@ -60,5 +67,19 @@ describe AeriesNetApi::Connection do
         expect(schools.first).to be_an_instance_of(AeriesNetApi::Models::School)
       end
     end
+
+    context 'terms' do
+      it 'should include a terms method' do
+        expect(connection.respond_to?(:terms)).to be true
+      end
+
+      it 'should return a list of terms for a given school' do
+        terms=connection.terms(1)
+        puts terms.inspect
+        puts terms.first.inspect
+        expect(terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
+      end
+    end
+
   end
 end
