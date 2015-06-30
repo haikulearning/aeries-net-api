@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Tomas Garrido","Mike Gorski"]
   spec.email         = ["tomas.garrido@avantic.net","mikeg@haikulearning"]
   spec.summary       = %q{Allows for connecting to the Aeries.NET API}
+  spec.description   = 'Extracts information from Aeries Rest-based API.'
 
   spec.homepage      = 'https://github.com/haikulearning/aeries-net-api'
   spec.license       = 'Proprietary'
