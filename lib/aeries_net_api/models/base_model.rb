@@ -13,9 +13,8 @@ module AeriesNetApi
         end
       end
 
-      def self. process_aeries_attributes(aeries_attributes)
+      def self.process_aeries_attributes(aeries_attributes)
         return_list=aeries_attributes.map { |attribute| "#{self.underscore(attribute)}=".to_sym }
-
         return_list.each do |attribute|
           # removes '=' from attribute name
           attr_accessor attribute[0..-2]
