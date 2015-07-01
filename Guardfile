@@ -1,5 +1,6 @@
 guard "bundler" do
   watch("Gemfile")
+  watch(/.+\.gemspec$/)
 end
 
 group :red_green_refactor, :halt_on_fail => true do
