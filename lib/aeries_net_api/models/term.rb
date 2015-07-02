@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent School information extracted from Aeries site.
+    # Class to represent school Term information extracted from Aeries site.
     class Term < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.
