@@ -42,6 +42,8 @@ describe AeriesNetApi::Connection do
   describe 'methods' do
 
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
+    let(:student_id) {99000002}
+    let(:school_code) {990}
 
     context 'school' do
       it 'should include a schools method' do
@@ -54,7 +56,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'school should include an array of terms' do
-        school=connection.schools(1)
+        school=connection.schools(school_code)
         expect(school.terms).to be_an_instance_of(Array)
         expect(school.terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
       end
@@ -73,6 +75,7 @@ describe AeriesNetApi::Connection do
 
       it 'should return a list of terms for a given school' do
         terms=connection.terms(1)
+        expect(terms).to be_instance_of Array
         expect(terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
       end
     end
@@ -89,18 +92,36 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return a list of students for a given school' do
-        students=connection.students(990)
+        students=connection.students(school_code)
         expect(students).to be_instance_of Array
         expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
       end
 
       it 'should return a list of students for a given school and student id' do
-        students=connection.students(990, 99000195)
+        students=connection.students(school_code, student_id)
         expect(students).to be_instance_of Array
         expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
       end
 
+      context 'contacts' do
+        it 'should include a contacts method' do
+          expect(connection.respond_to?(:contacts)).to be true
+        end
 
+        it 'should return a list of contacts for a given school' do
+          contacts=connection.contacts(school_code)
+          expect(contacts).to be_instance_of Array
+          expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
+        end
+
+        it 'should return a list of contacts for a given school and student id' do
+          contacts=connection.contacts(school_code, student_id)
+          expect(contacts).to be_instance_of Array
+          expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
+          expect(contacts.first.permanent_id).to be_eql student_id
+          expect(contacts.first.school_code).to be_eql school_code
+        end
+      end
     end
   end
 end

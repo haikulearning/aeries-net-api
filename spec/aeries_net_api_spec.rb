@@ -28,5 +28,13 @@ describe AeriesNetApi do
       expect({}.blank?).to be true
     end
 
+    it 'should return true for a boolean false' do
+      expect(false.blank?).to be true
+    end
+
+    it 'should return false for a booean true' do
+      expect(true.blank?).to be false
+    end
+
   end
 end

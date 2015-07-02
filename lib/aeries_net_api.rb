@@ -5,6 +5,7 @@ require 'aeries_net_api/models/base_model'
 require 'aeries_net_api/models/school'
 require 'aeries_net_api/models/term'
 require 'aeries_net_api/models/student'
+require 'aeries_net_api/models/contact'
 
 module AeriesNetApi
 
