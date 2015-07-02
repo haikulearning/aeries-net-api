@@ -50,13 +50,11 @@ describe AeriesNetApi::Connection do
 
       it 'should return school information for a given id' do
         school=connection.schools(1)
-        # puts school.inspect
         expect(school).to be_an_instance_of(AeriesNetApi::Models::School)
       end
 
       it 'school should include an array of terms' do
         school=connection.schools(1)
-        # puts school.inspect
         expect(school.terms).to be_an_instance_of(Array)
         expect(school.terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
       end
@@ -75,11 +73,34 @@ describe AeriesNetApi::Connection do
 
       it 'should return a list of terms for a given school' do
         terms=connection.terms(1)
-        puts terms.inspect
-        puts terms.first.inspect
         expect(terms.first).to be_an_instance_of(AeriesNetApi::Models::Term)
       end
     end
 
+    context 'students' do
+      it 'should include a terms method' do
+        expect(connection.respond_to?(:students)).to be true
+      end
+
+      it 'should return an empty array for an invalid school' do
+        students=connection.students(-1)
+        expect(students).to be_instance_of Array
+        expect(students).to be_empty
+      end
+
+      it 'should return a list of students for a given school' do
+        students=connection.students(990)
+        expect(students).to be_instance_of Array
+        expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
+      end
+
+      it 'should return a list of students for a given school and student id' do
+        students=connection.students(990, 99000195)
+        expect(students).to be_instance_of Array
+        expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
+      end
+
+
+    end
   end
 end

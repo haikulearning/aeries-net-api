@@ -29,11 +29,14 @@ module AeriesNetApi
                                                                           :accept => 'application/json, text/html, application/xhtml+xml, */*'}, :ssl => {:verify => false})
     end
 
-    #ToDo: Transform terms into an array of Term when this class be done.
     # Get school(s) information.
     # Parameters:
-    # school_code  - optional.  If not given info for all schools will be retrieved.
-
+    # school_code  - optional.  The Aeries School Code. This is normally 1-999.  If School Code is not passed,
+    # all schools for the current district will be returned.
+    # School object contains a list of Terms.
+    #
+    # Returns a single School object if school_code was given
+    # Returns an array of School objects if school_code was omitted.
     def schools(school_code=nil)
       data=get_data("api/v2/schools/#{school_code}")
       unless school_code.nil?
@@ -47,6 +50,11 @@ module AeriesNetApi
       end
     end
 
+    # Get terms for a given school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    #
+    # Returns an array of Term objects.
     def terms(school_code)
       data=get_data("api/v2/schools/#{school_code}/terms")
       models=[]
@@ -56,6 +64,22 @@ module AeriesNetApi
       models
     end
 
+    # Get student(s) for a given school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all students for the given
+    # school will be returned.
+    #
+    # Results are always returned in the form of an "Array of Students" because often students have multiple
+    # records in a district if they are concurrently enrolled or have switched between schools during the school year.
+    def students(school_code,student_id=nil)
+      data=get_data("api/schools/#{school_code}/students/#{student_id}")
+      models=[]
+      data.each do |item_data|
+        models << AeriesNetApi::Models::Student.new(item_data)
+      end
+      models
+    end
 
     private
 
