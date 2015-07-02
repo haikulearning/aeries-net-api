@@ -28,8 +28,8 @@ module AeriesNetApi
       # Overrides 'parse' method to parse dates
       def parse(aeries_data, aeries_attributes_list, setters_list)
         super
-        self.start_date=DateTime.parse(self.start_date)
-        self.end_date=DateTime.parse(self.end_date)
+        self.start_date=DateTime.parse(self.start_date) unless self.start_date.nil?
+        self.end_date=DateTime.parse(self.end_date) unless self.end_date.nil?
       end
 
     end
