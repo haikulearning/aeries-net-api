@@ -109,12 +109,34 @@ module AeriesNetApi
     # Returns an array of StudentClass
     def classes(school_code, student_id=nil)
       data=get_data("api/schools/#{school_code}/classes/#{student_id}")
-      #puts data.first.keys.join(" ")
       models=[]
       data.each do |item_data|
         models << AeriesNetApi::Models::StudentClass.new(item_data)
       end
       models
+    end
+
+
+    # Get course(s) information.
+    # Parameters:
+    # course_id - optional.  The Aeries Course ID (alpha-numeric). If it is not passed, all courses in the district
+    # will be returned.
+    #
+    # Returns:
+    # - A single Course object if course_id was given
+    # - An array of Course objects if course_id was omitted.
+    def courses(course_id=nil)
+      data=get_data("api/courses/#{course_id}")
+     #  puts data.keys.join(' ')    # To extract current Aeries attributes names
+      if course_id.present?
+        model=AeriesNetApi::Models::Course.new(data)
+      else
+        models=[]
+        data.each do |course_data|
+          models << AeriesNetApi::Models::Course.new(course_data)
+        end
+        models
+      end
     end
 
     private

@@ -42,16 +42,16 @@ describe AeriesNetApi::Connection do
   describe 'methods' do
 
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
-    let(:student_id) {99400003}
-    let(:school_code) {994}
+    let(:student_id) { 99400003 }
+    let(:school_code) { 994 }
 
-    context 'school' do
+    context 'schools' do
       it 'should include a schools method' do
         expect(connection.respond_to?(:schools)).to be true
       end
 
       it 'should return school information for a given id' do
-        school=connection.schools(1)
+        school=connection.schools(school_code)
         expect(school).to be_an_instance_of(AeriesNetApi::Models::School)
       end
 
@@ -143,5 +143,28 @@ describe AeriesNetApi::Connection do
         end
       end
     end
+
+    context 'courses' do
+      it 'should include a courses method' do
+        expect(connection.respond_to?(:courses)).to be true
+      end
+
+      it 'should return course information for a given id' do
+        course=connection.courses('0001')
+        expect(course).to be_an_instance_of(AeriesNetApi::Models::Course)
+        expect(course.id).to be_eql '0001'
+      end
+
+      it 'should return a list of courses when an id was not given' do
+        courses=connection.courses()
+        expect(courses).to be_an_instance_of(Array)
+        expect(courses.first).to be_an_instance_of(AeriesNetApi::Models::Course)
+      end
+
+      it 'should raise an error for a non existent course' do
+        expect{connection.courses('1')}.to raise_error(RuntimeError, /404/)
+      end
+    end
+
   end
 end

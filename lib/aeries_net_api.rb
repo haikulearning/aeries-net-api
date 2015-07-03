@@ -7,6 +7,7 @@ require 'aeries_net_api/models/term'
 require 'aeries_net_api/models/student'
 require 'aeries_net_api/models/contact'
 require 'aeries_net_api/models/student_class'
+require 'aeries_net_api/models/course'
 
 module AeriesNetApi
 
