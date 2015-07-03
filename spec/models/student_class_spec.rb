@@ -5,7 +5,7 @@ describe AeriesNetApi::Models::StudentClass do
  let(:test_class) {AeriesNetApi::Models::StudentClass}
 
   context 'methods' do
-    it 'should create an instance of AeriesNetApi::Models::StudentClass' do
+    it 'should create an empty instance of AeriesNetApi::Models::StudentClass' do
       expect(test_class.new).to be_instance_of test_class
     end
 

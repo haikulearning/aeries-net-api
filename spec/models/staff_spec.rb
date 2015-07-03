@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe AeriesNetApi::Models::Term do
+describe AeriesNetApi::Models::Staff do
 
- let(:test_class) {AeriesNetApi::Models::Term}
+ let(:test_class) {AeriesNetApi::Models::Staff}
 
   context 'methods' do
-    it 'should create an empty instance of AeriesNetApi::Models::Term' do
+    it 'should create an empty instance of AeriesNetApi::Models::Staff' do
       expect(test_class.new).to be_instance_of test_class
     end
 
-    it 'attributes should  return  a list of Aeries attributes' do
+    it 'attributes should return  a list of Aeries attributes' do
       object=test_class.new
       expect(object.attributes).to be_instance_of Hash
     end

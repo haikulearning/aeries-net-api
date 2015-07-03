@@ -102,47 +102,47 @@ describe AeriesNetApi::Connection do
         expect(students).to be_instance_of Array
         expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
       end
-
-      context 'contacts' do
-        it 'should include a contacts method' do
-          expect(connection.respond_to?(:contacts)).to be true
-        end
-
-        it 'should return a list of contacts for a given school' do
-          contacts=connection.contacts(school_code)
-          expect(contacts).to be_instance_of Array
-          expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
-        end
-
-        it 'should return a list of contacts for a given school and student id' do
-          contacts=connection.contacts(school_code, student_id)
-          expect(contacts).to be_instance_of Array
-          expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
-          expect(contacts.first.permanent_id).to be_eql student_id
-          expect(contacts.first.school_code).to be_eql school_code
-        end
+    end
+    context 'contacts' do
+      it 'should include a contacts method' do
+        expect(connection.respond_to?(:contacts)).to be true
       end
 
-      context 'classes' do
-        it 'should include a classes method' do
-          expect(connection.respond_to?(:classes)).to be true
-        end
+      it 'should return a list of contacts for a given school' do
+        contacts=connection.contacts(school_code)
+        expect(contacts).to be_instance_of Array
+        expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
+      end
 
-        it 'should return a list of classes for a given school' do
-          classes=connection.classes(school_code)
-          expect(classes).to be_instance_of Array
-          expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
-        end
-
-        it 'should return a list of classes for a given school and student id' do
-          classes=connection.classes(school_code, student_id)
-          expect(classes).to be_instance_of Array
-          expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
-          expect(classes.first.permanent_id).to be_eql student_id
-          expect(classes.first.school_code).to be_eql school_code
-        end
+      it 'should return a list of contacts for a given school and student id' do
+        contacts=connection.contacts(school_code, student_id)
+        expect(contacts).to be_instance_of Array
+        expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
+        expect(contacts.first.permanent_id).to be_eql student_id
+        expect(contacts.first.school_code).to be_eql school_code
       end
     end
+
+    context 'classes' do
+      it 'should include a classes method' do
+        expect(connection.respond_to?(:classes)).to be true
+      end
+
+      it 'should return a list of classes for a given school' do
+        classes=connection.classes(school_code)
+        expect(classes).to be_instance_of Array
+        expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
+      end
+
+      it 'should return a list of classes for a given school and student id' do
+        classes=connection.classes(school_code, student_id)
+        expect(classes).to be_instance_of Array
+        expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
+        expect(classes.first.permanent_id).to be_eql student_id
+        expect(classes.first.school_code).to be_eql school_code
+      end
+    end
+
 
     context 'courses' do
       it 'should include a courses method' do
@@ -162,9 +162,32 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should raise an error for a non existent course' do
-        expect{connection.courses('1')}.to raise_error(RuntimeError, /404/)
+        expect { connection.courses('1') }.to raise_error(RuntimeError, /404/)
       end
     end
 
+    context 'staff' do
+      let(:staff_id) {990001}
+
+      it 'should include a staff method' do
+        expect(connection.respond_to?(:staff)).to be true
+      end
+
+      it 'should return staff member information for a given id' do
+        staff_member=connection.staff(staff_id)
+        expect(staff_member).to be_an_instance_of(AeriesNetApi::Models::Staff)
+        expect(staff_member.id).to be_eql staff_id
+      end
+
+      it 'should return a list of staff members when an id was not given' do
+        staff=connection.staff()
+        expect(staff).to be_an_instance_of(Array)
+        expect(staff.first).to be_an_instance_of(AeriesNetApi::Models::Staff)
+      end
+
+      it 'should raise an error for a non existent course' do
+        expect { connection.staff('13') }.to raise_error(ArgumentError, /13/)
+      end
+    end
   end
 end
