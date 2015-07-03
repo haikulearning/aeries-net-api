@@ -42,8 +42,8 @@ describe AeriesNetApi::Connection do
   describe 'methods' do
 
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
-    let(:student_id) {99000002}
-    let(:school_code) {990}
+    let(:student_id) {99400003}
+    let(:school_code) {994}
 
     context 'school' do
       it 'should include a schools method' do
@@ -120,6 +120,26 @@ describe AeriesNetApi::Connection do
           expect(contacts.first).to be_an_instance_of(AeriesNetApi::Models::Contact)
           expect(contacts.first.permanent_id).to be_eql student_id
           expect(contacts.first.school_code).to be_eql school_code
+        end
+      end
+
+      context 'classes' do
+        it 'should include a classes method' do
+          expect(connection.respond_to?(:classes)).to be true
+        end
+
+        it 'should return a list of classes for a given school' do
+          classes=connection.classes(school_code)
+          expect(classes).to be_instance_of Array
+          expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
+        end
+
+        it 'should return a list of classes for a given school and student id' do
+          classes=connection.classes(school_code, student_id)
+          expect(classes).to be_instance_of Array
+          expect(classes.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
+          expect(classes.first.permanent_id).to be_eql student_id
+          expect(classes.first.school_code).to be_eql school_code
         end
       end
     end

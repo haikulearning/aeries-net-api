@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe AeriesNetApi::Models::Student do
 
- let(:test_class) {AeriesNetApi::Models::Term}
+ let(:test_class) {AeriesNetApi::Models::Student}
 
   context 'methods' do
-    it 'should create an instance of AeriesNetApi::Models::Student' do
+    it 'should create an empty instance of AeriesNetApi::Models::Student' do
       expect(test_class.new).to be_instance_of test_class
     end
 

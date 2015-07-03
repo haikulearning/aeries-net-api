@@ -74,7 +74,7 @@ module AeriesNetApi
     # Returns array of Student.
     # Results are always returned in the form of an array because often students have multiple
     # records in a district if they are concurrently enrolled or have switched between schools during the school year.
-    def students(school_code,student_id=nil)
+    def students(school_code, student_id=nil)
       data=get_data("api/schools/#{school_code}/students/#{student_id}")
       models=[]
       data.each do |item_data|
@@ -89,12 +89,30 @@ module AeriesNetApi
     # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all contacts for all
     # students for the given school will be returned.
     #
-    # Returns an array or Contact
-    def contacts(school_code,student_id=nil)
+    # Returns an array of Contact
+    def contacts(school_code, student_id=nil)
       data=get_data("api/schools/#{school_code}/contacts/#{student_id}")
       models=[]
       data.each do |item_data|
         models << AeriesNetApi::Models::Contact.new(item_data)
+      end
+      models
+    end
+
+
+    # Get student classes for a given student/school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all classes for all
+    # students for the given school will be returned.
+    #
+    # Returns an array of StudentClass
+    def classes(school_code, student_id=nil)
+      data=get_data("api/schools/#{school_code}/classes/#{student_id}")
+      #puts data.first.keys.join(" ")
+      models=[]
+      data.each do |item_data|
+        models << AeriesNetApi::Models::StudentClass.new(item_data)
       end
       models
     end
@@ -104,6 +122,8 @@ module AeriesNetApi
     def get_data(endpoint)
       response=@connection.get do |req|
         req.url endpoint
+        req.options.timeout = 120 # read timeout in seconds
+        req.options.open_timeout = 60 # open timeout in seconds
       end
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status==200
       raise "Invalid response type received: #{response.headers["content-type"]}" unless response.headers["content-type"].match /json/

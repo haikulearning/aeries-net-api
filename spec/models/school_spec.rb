@@ -4,7 +4,7 @@ describe AeriesNetApi::Models::School do
 
   context 'methods' do
 
-    it 'should create an instance of AeriesNetApi::Models::School' do
+    it 'should create an empty instance of AeriesNetApi::Models::School' do
       expect(AeriesNetApi::Models::School.new).to be_instance_of AeriesNetApi::Models::School
     end
 
