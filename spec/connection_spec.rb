@@ -1,6 +1,4 @@
 require 'spec_helper'
-# ToDo: add specs to test handling of response errors.
-# ToDo: add specs to test connectivity
 
 describe AeriesNetApi::Connection do
 
@@ -44,6 +42,7 @@ describe AeriesNetApi::Connection do
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
     let(:student_id) { 99400003 }
     let(:school_code) { 994 }
+    let(:section_number) {43}
 
     context 'schools' do
       it 'should include a schools method' do
@@ -217,8 +216,9 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return section information for a given section number' do
-        section=connection.sections(school_code,43)
+        section=connection.sections(school_code,section_number)
         expect(section).to be_an_instance_of(AeriesNetApi::Models::Section)
+        expect(section.section_number).to be_eql(section_number)
       end
 
       it 'should return a list of sections when an id was not given' do
@@ -244,7 +244,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return class roster for a given school/section number' do
-        list=connection.class_roster(school_code,43)
+        list=connection.class_roster(school_code,section_number)
         expect(list).to be_an_instance_of Array
         expect(list.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
       end
@@ -253,6 +253,42 @@ describe AeriesNetApi::Connection do
         list=connection.class_roster(0,998)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
+      end
+    end
+
+    context 'gradebooks' do
+
+      it 'should include a gradebooks method' do
+        expect(connection.respond_to?(:gradebooks)).to be true
+      end
+
+      it 'should return a list of gradebooks ' do
+        gradebooks=connection.gradebooks(school_code,section_number)
+        expect(gradebooks).to be_an_instance_of(Array)
+        expect(gradebooks.first).to be_an_instance_of(AeriesNetApi::Models::Gradebook)
+      end
+
+      it 'school should include a GradebookSettings object' do
+        gradebooks=connection.gradebooks(school_code,section_number)
+        expect(gradebooks.first.settings).to be_an_instance_of(AeriesNetApi::Models::GradebookSettings)
+      end
+
+      it 'school should include an array of AssignmentCategory objects' do
+        gradebooks=connection.gradebooks(school_code,section_number)
+        expect(gradebooks.first.assignment_categories).to be_an_instance_of(Array)
+        expect(gradebooks.first.assignment_categories.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
+      end
+
+      it 'school should include an array of GradebookSection objects' do
+        gradebooks=connection.gradebooks(school_code,section_number)
+        expect(gradebooks.first.sections).to be_an_instance_of(Array)
+        expect(gradebooks.first.sections.first).to be_an_instance_of(AeriesNetApi::Models::GradebookSection)
+      end
+
+      it 'school should include an array of GradebookTerm objects' do
+        gradebooks=connection.gradebooks(school_code,section_number)
+        expect(gradebooks.first.terms).to be_an_instance_of(Array)
+        expect(gradebooks.first.terms.first).to be_an_instance_of(AeriesNetApi::Models::GradebookTerm)
       end
     end
   end

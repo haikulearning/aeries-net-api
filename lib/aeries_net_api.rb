@@ -11,6 +11,11 @@ require 'aeries_net_api/models/course'
 require 'aeries_net_api/models/staff'
 require 'aeries_net_api/models/teacher'
 require 'aeries_net_api/models/section'
+require 'aeries_net_api/models/gradebook'
+require 'aeries_net_api/models/gradebook_settings'
+require 'aeries_net_api/models/assignment_category'
+require 'aeries_net_api/models/gradebook_section'
+require 'aeries_net_api/models/gradebook_term'
 
 module AeriesNetApi
 

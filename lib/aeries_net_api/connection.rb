@@ -170,8 +170,8 @@ module AeriesNetApi
       data = get_data("api/schools/#{school_code}/teachers/#{teacher_number}")
       if teacher_number.nil?
         models=[]
-        data.each do |school_data|
-          models << AeriesNetApi::Models::Teacher.new(school_data)
+        data.each do |teacher_data|
+          models << AeriesNetApi::Models::Teacher.new(teacher_data)
         end
         models
       else
@@ -189,11 +189,10 @@ module AeriesNetApi
     # - An array of Section objects if section_number was omitted.
     def sections(school_code, section_number=nil)
       data = get_data("api/schools/#{school_code}/sections/#{section_number}")
-      # puts data.keys.join(' ')  if data.present? && section_number.present? # To extract current Aeries attributes names
       if section_number.nil?
         models=[]
-        data.each do |school_data|
-          models << AeriesNetApi::Models::Section.new(school_data)
+        data.each do |section_data|
+          models << AeriesNetApi::Models::Section.new(section_data)
         end
         models
       else
@@ -210,10 +209,26 @@ module AeriesNetApi
     # - An array of StudentClass objects.
     def class_roster(school_code, section_number)
       data = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
-      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
-      data.each do |school_data|
-        models << AeriesNetApi::Models::StudentClass.new(school_data)
+      data.each do |class_data|
+        models << AeriesNetApi::Models::StudentClass.new(class_data)
+      end
+      models
+    end
+
+    # Get gradebooks for a given section/school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # section_number  - required. The School-Based Aeries Section Number.
+    #
+    # Returns
+    # - An array of Gradebook objects.
+    def gradebooks(school_code, section_number)
+      data = get_data("api/v2/schools/#{school_code}/sections/#{section_number}/gradebooks")
+      #puts data.first['Terms'].first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      data.each do |gradebook_data|
+        models <<  AeriesNetApi::Models::Gradebook.new(gradebook_data)
       end
       models
     end
