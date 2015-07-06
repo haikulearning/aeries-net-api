@@ -146,7 +146,6 @@ module AeriesNetApi
     # - An array of Staff objects if staff_id was omitted.
     def staff(staff_id=nil)
       data=get_data("api/v2/staff/#{staff_id}")
-      #puts data.first.keys.join(' ')  if data.present? && staff_id.present? # To extract current Aeries attributes names
       if staff_id.present?
         raise ArgumentError, "Staff member with id #{staff_id} doesn't exist" if data.blank?
         AeriesNetApi::Models::Staff.new(data.first)  # This endpoint always returns an array.
@@ -156,6 +155,28 @@ module AeriesNetApi
           models << AeriesNetApi::Models::Staff.new(member_data)
         end
         models
+      end
+    end
+
+    # Get teacher(s) for a given school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # teacher_number  - optional. The School-Based Aeries Teacher Number.
+    #
+    # Returns
+    # - A single Teacher object if teacher_number was given
+    # - An array of Teacher objects if teacher_numbers was omitted.
+    def teachers(school_code, teacher_number=nil)
+      data  =get_data("api/schools/#{school_code}/teachers/#{teacher_number}")
+      #puts data.keys.join(' ')  if data.present? && teacher_number.present? # To extract current Aeries attributes names
+      if teacher_number.nil?
+        models=[]
+        data.each do |school_data|
+          models << AeriesNetApi::Models::Teacher.new(school_data)
+        end
+        models
+      else
+        AeriesNetApi::Models::Teacher.new(data)
       end
     end
 

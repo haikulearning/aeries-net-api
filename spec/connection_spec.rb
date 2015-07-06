@@ -189,5 +189,26 @@ describe AeriesNetApi::Connection do
         expect { connection.staff('13') }.to raise_error(ArgumentError, /13/)
       end
     end
+
+    context 'teachers' do
+      it 'should include a teachers method' do
+        expect(connection.respond_to?(:teachers)).to be true
+      end
+
+      it 'should return teacher information for a given teacher number' do
+        teacher=connection.teachers(school_code,601)
+        expect(teacher).to be_an_instance_of(AeriesNetApi::Models::Teacher)
+      end
+
+      it 'should return a list of teachers when an id was not given' do
+        teachers=connection.teachers(school_code)
+        expect(teachers).to be_an_instance_of(Array)
+        expect(teachers.first).to be_an_instance_of(AeriesNetApi::Models::Teacher)
+      end
+
+      it 'should raise an error for a non existent course' do
+        expect { connection.teachers(school_code,1) }.to raise_error(StandardError, %r[#{school_code}])
+      end
+    end
   end
 end
