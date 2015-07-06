@@ -165,10 +165,9 @@ module AeriesNetApi
     #
     # Returns
     # - A single Teacher object if teacher_number was given
-    # - An array of Teacher objects if teacher_numbers was omitted.
+    # - An array of Teacher objects if teacher_number was omitted.
     def teachers(school_code, teacher_number=nil)
-      data  =get_data("api/schools/#{school_code}/teachers/#{teacher_number}")
-      #puts data.keys.join(' ')  if data.present? && teacher_number.present? # To extract current Aeries attributes names
+      data = get_data("api/schools/#{school_code}/teachers/#{teacher_number}")
       if teacher_number.nil?
         models=[]
         data.each do |school_data|
@@ -180,6 +179,27 @@ module AeriesNetApi
       end
     end
 
+    # Get section(s) for a given school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # section_number  - optional. The School-Based Aeries Section Number.
+    #
+    # Returns
+    # - A single Section object if section_number was given
+    # - An array of Section objects if section_number was omitted.
+    def sections(school_code, section_number=nil)
+      data = get_data("api/schools/#{school_code}/sections/#{section_number}")
+      # puts data.keys.join(' ')  if data.present? && section_number.present? # To extract current Aeries attributes names
+      if section_number.nil?
+        models=[]
+        data.each do |school_data|
+          models << AeriesNetApi::Models::Section.new(school_data)
+        end
+        models
+      else
+        AeriesNetApi::Models::Section.new(data)
+      end
+    end
     private
 
     def get_data(endpoint)

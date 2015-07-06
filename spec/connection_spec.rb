@@ -206,8 +206,35 @@ describe AeriesNetApi::Connection do
         expect(teachers.first).to be_an_instance_of(AeriesNetApi::Models::Teacher)
       end
 
-      it 'should raise an error for a non existent course' do
+      it 'should raise an error for a non existent teacher' do
         expect { connection.teachers(school_code,1) }.to raise_error(StandardError, %r[#{school_code}])
+      end
+    end
+
+    context 'sections' do
+      it 'should include a sections method' do
+        expect(connection.respond_to?(:sections)).to be true
+      end
+
+      it 'should return section information for a given section number' do
+        section=connection.sections(school_code,43)
+        expect(section).to be_an_instance_of(AeriesNetApi::Models::Section)
+      end
+
+      it 'should return a list of sections when an id was not given' do
+        sections=connection.sections(school_code)
+        expect(sections).to be_an_instance_of(Array)
+        expect(sections.first).to be_an_instance_of(AeriesNetApi::Models::Section)
+      end
+
+      it 'should return an empty list when an invalid school code was given' do
+        sections=connection.sections(0)
+        expect(sections).to be_an_instance_of(Array)
+        expect(sections).to be_empty
+      end
+
+      it 'should raise an error for a non existent section' do
+        expect { connection.sections(school_code,145) }.to raise_error(StandardError, /145/)
       end
     end
   end

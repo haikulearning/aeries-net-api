@@ -10,6 +10,7 @@ require 'aeries_net_api/models/student_class'
 require 'aeries_net_api/models/course'
 require 'aeries_net_api/models/staff'
 require 'aeries_net_api/models/teacher'
+require 'aeries_net_api/models/section'
 
 module AeriesNetApi
 
