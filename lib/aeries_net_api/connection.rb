@@ -241,8 +241,23 @@ module AeriesNetApi
     # - A Gradebook object.
     def gradebook(gradebook_number)
       data = get_data("api/v2/gradebooks/#{gradebook_number}")
-      #puts data.first['Terms'].first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       AeriesNetApi::Models::Gradebook.new(data)
+    end
+
+    # Get assignments for a given gradebook number
+    # Parameters:
+    # gradebook_number - required.  The specific Aeries Gradebook Number.
+    #
+    # Returns
+    # - An array of Assignment objects.
+    def assignments(gradebook_number)
+      data = get_data("api/v2/gradebooks/#{gradebook_number}/assignments")
+     # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      data.each do |assignment_data|
+        models <<  AeriesNetApi::Models::Assignment.new(assignment_data)
+      end
+      models
     end
 
     private

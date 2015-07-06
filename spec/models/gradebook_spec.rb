@@ -40,7 +40,6 @@ describe AeriesNetApi::Models::Gradebook do
       it 'should return true when comparing with another Gradebook with same number' do
         gradebook                 =test_class.new
         gradebook.gradebook_number=1
-        puts gradebook.gradebook_number.inspect
         gradebook2                 =test_class.new
         gradebook2.gradebook_number=1
         expect(gradebook.eql? gradebook2).to be true
@@ -49,7 +48,6 @@ describe AeriesNetApi::Models::Gradebook do
       it 'should return true when comparing with another Gradebook with different number' do
         gradebook                 =test_class.new
         gradebook.gradebook_number=1
-        puts gradebook.gradebook_number.inspect
         gradebook2                 =test_class.new
         gradebook2.gradebook_number=2
         expect(gradebook.eql? gradebook2).to be false

@@ -300,7 +300,31 @@ describe AeriesNetApi::Connection do
         expect(first_gradebook.gradebook_number).to be_eql(gradebook.gradebook_number)
         expect first_gradebook.eql? gradebook
       end
+    end
 
+    context 'assignments' do
+
+      let(:gradebook_number) {4487750}
+      let(:list) {connection.assignments(gradebook_number)}
+
+      it 'should include an assignments method' do
+        expect(connection.respond_to?(:assignments)).to be true
+      end
+
+      it 'should return an array of assignments for a given gradebook number' do
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::Assignment)
+      end
+
+      it 'should include an AssignmentCategory object' do
+        expect(list.first.assignment_category).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
+      end
+
+      it 'should return an empty list when an invalid gradebook code was given' do
+        list=connection.assignments(998)
+        expect(list).to be_an_instance_of(Array)
+        expect(list).to be_empty
+      end
     end
   end
 end
