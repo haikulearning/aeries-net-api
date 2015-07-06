@@ -50,6 +50,11 @@ module AeriesNetApi
         self.terms=terms
       end
 
+      def eql?(another_object)
+        return false unless another_object.instance_of?(self.class)
+        return self.gradebook_number.eql? another_object.gradebook_number
+      end
+
     end
   end
 end

@@ -233,6 +233,18 @@ module AeriesNetApi
       models
     end
 
+    # Get a gradebook for a given gradebook number
+    # Parameters:
+    # gradebook_number - required.  The specific Aeries Gradebook Number.
+    #
+    # Returns
+    # - A Gradebook object.
+    def gradebook(gradebook_number)
+      data = get_data("api/v2/gradebooks/#{gradebook_number}")
+      #puts data.first['Terms'].first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      AeriesNetApi::Models::Gradebook.new(data)
+    end
+
     private
 
     def get_data(endpoint)

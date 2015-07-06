@@ -257,39 +257,50 @@ describe AeriesNetApi::Connection do
     end
 
     context 'gradebooks' do
+      let(:gradebooks) {connection.gradebooks(school_code,section_number)}
 
       it 'should include a gradebooks method' do
         expect(connection.respond_to?(:gradebooks)).to be true
       end
 
       it 'should return a list of gradebooks ' do
-        gradebooks=connection.gradebooks(school_code,section_number)
         expect(gradebooks).to be_an_instance_of(Array)
         expect(gradebooks.first).to be_an_instance_of(AeriesNetApi::Models::Gradebook)
       end
 
       it 'school should include a GradebookSettings object' do
-        gradebooks=connection.gradebooks(school_code,section_number)
         expect(gradebooks.first.settings).to be_an_instance_of(AeriesNetApi::Models::GradebookSettings)
       end
 
       it 'school should include an array of AssignmentCategory objects' do
-        gradebooks=connection.gradebooks(school_code,section_number)
         expect(gradebooks.first.assignment_categories).to be_an_instance_of(Array)
         expect(gradebooks.first.assignment_categories.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
       end
 
       it 'school should include an array of GradebookSection objects' do
-        gradebooks=connection.gradebooks(school_code,section_number)
         expect(gradebooks.first.sections).to be_an_instance_of(Array)
         expect(gradebooks.first.sections.first).to be_an_instance_of(AeriesNetApi::Models::GradebookSection)
       end
 
       it 'school should include an array of GradebookTerm objects' do
-        gradebooks=connection.gradebooks(school_code,section_number)
         expect(gradebooks.first.terms).to be_an_instance_of(Array)
         expect(gradebooks.first.terms.first).to be_an_instance_of(AeriesNetApi::Models::GradebookTerm)
       end
+    end
+
+    context 'single gradebook' do
+      it 'should include a gradebook method' do
+        expect(connection.respond_to?(:gradebook)).to be true
+      end
+
+      it 'should return a single Gradebook object for a given gradebook number' do
+        gradebooks=connection.gradebooks(school_code, section_number)
+        first_gradebook=gradebooks.first
+        gradebook=connection.gradebook(first_gradebook.gradebook_number)
+        expect(first_gradebook.gradebook_number).to be_eql(gradebook.gradebook_number)
+        expect first_gradebook.eql? gradebook
+      end
+
     end
   end
 end
