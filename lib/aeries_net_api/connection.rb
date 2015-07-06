@@ -148,7 +148,7 @@ module AeriesNetApi
       data=get_data("api/v2/staff/#{staff_id}")
       if staff_id.present?
         raise ArgumentError, "Staff member with id #{staff_id} doesn't exist" if data.blank?
-        AeriesNetApi::Models::Staff.new(data.first)  # This endpoint always returns an array.
+        AeriesNetApi::Models::Staff.new(data.first) # This endpoint always returns an array.
       else
         models=[]
         data.each do |member_data|
@@ -200,6 +200,24 @@ module AeriesNetApi
         AeriesNetApi::Models::Section.new(data)
       end
     end
+
+    # Get class roster for a given section/school
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # section_number  - required. The School-Based Aeries Section Number.
+    #
+    # Returns
+    # - An array of StudentClass objects.
+    def class_roster(school_code, section_number)
+      data = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      data.each do |school_data|
+        models << AeriesNetApi::Models::StudentClass.new(school_data)
+      end
+      models
+    end
+
     private
 
     def get_data(endpoint)

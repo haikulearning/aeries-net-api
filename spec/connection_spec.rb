@@ -237,5 +237,23 @@ describe AeriesNetApi::Connection do
         expect { connection.sections(school_code,145) }.to raise_error(StandardError, /145/)
       end
     end
+
+    context 'class roster' do
+      it 'should include a class_roster method' do
+        expect(connection.respond_to?(:class_roster)).to be true
+      end
+
+      it 'should return class roster for a given school/section number' do
+        list=connection.class_roster(school_code,43)
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
+      end
+
+      it 'should return an empty list when an invalid school code was given' do
+        list=connection.class_roster(0,998)
+        expect(list).to be_an_instance_of(Array)
+        expect(list).to be_empty
+      end
+    end
   end
 end
