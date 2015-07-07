@@ -208,7 +208,7 @@ module AeriesNetApi
     # Returns
     # - An array of StudentClass objects.
     def class_roster(school_code, section_number)
-      data = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
+      data  = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
       models=[]
       data.each do |class_data|
         models << AeriesNetApi::Models::StudentClass.new(class_data)
@@ -224,11 +224,11 @@ module AeriesNetApi
     # Returns
     # - An array of Gradebook objects.
     def gradebooks(school_code, section_number)
-      data = get_data("api/v2/schools/#{school_code}/sections/#{section_number}/gradebooks")
+      data  = get_data("api/v2/schools/#{school_code}/sections/#{section_number}/gradebooks")
       #puts data.first['Terms'].first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       data.each do |gradebook_data|
-        models <<  AeriesNetApi::Models::Gradebook.new(gradebook_data)
+        models << AeriesNetApi::Models::Gradebook.new(gradebook_data)
       end
       models
     end
@@ -251,11 +251,29 @@ module AeriesNetApi
     # Returns
     # - An array of Assignment objects.
     def assignments(gradebook_number)
-      data = get_data("api/v2/gradebooks/#{gradebook_number}/assignments")
-     # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments")
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       data.each do |assignment_data|
-        models <<  AeriesNetApi::Models::Assignment.new(assignment_data)
+        models << AeriesNetApi::Models::Assignment.new(assignment_data)
+      end
+      models
+    end
+
+    # Get final marks for a given gradebook number
+    # Parameters:
+    # gradebook_number - required.  The specific Aeries Gradebook Number.
+    #
+    # Returns
+    # - An array of FinalMark objects.
+    def final_marks(gradebook_number)
+      data  = get_data("api/v2/gradebooks/#{gradebook_number}/FinalMarks")
+      #puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      # Aeries returns an array filled with nil for an invalid gradebook number
+      return models if data.empty? || data.first.nil?
+      data.each do |item_data|
+        models << AeriesNetApi::Models::FinalMark.new(item_data)
       end
       models
     end

@@ -43,6 +43,7 @@ describe AeriesNetApi::Connection do
     let(:student_id) { 99400003 }
     let(:school_code) { 994 }
     let(:section_number) {43}
+    let(:gradebook_number) {4487750}
 
     context 'schools' do
       it 'should include a schools method' do
@@ -304,7 +305,7 @@ describe AeriesNetApi::Connection do
 
     context 'assignments' do
 
-      let(:gradebook_number) {4487750}
+
       let(:list) {connection.assignments(gradebook_number)}
 
       it 'should include an assignments method' do
@@ -324,11 +325,30 @@ describe AeriesNetApi::Connection do
         expect(list.first.standards).to be_an_instance_of(Array)
         expect(list.first.standards.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandard) unless
             list.first.standards.empty?
-        puts list.first.attributes
       end
 
       it 'should return an empty list when an invalid gradebook code was given' do
         list=connection.assignments(998)
+        expect(list).to be_an_instance_of(Array)
+        expect(list).to be_empty
+      end
+    end
+
+    context 'final marks' do
+
+      let(:list) {connection.final_marks(gradebook_number)}
+
+      it 'should include an final_marks method' do
+        expect(connection.respond_to?(:final_marks)).to be true
+      end
+
+      it 'should return an array of final marks for a given gradebook number' do
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::FinalMark)
+      end
+
+      it 'should return an empty list when an invalid gradebook code was given' do
+        list=connection.final_marks(998)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
       end
