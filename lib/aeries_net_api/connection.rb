@@ -351,11 +351,37 @@ module AeriesNetApi
         end
         models
       else
-        # puts data.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
         student=AeriesNetApi::Models::GradebookStudent.new(data)
         raise RuntimeError, "Invalid student_id #{student_id} for gradebook #{gradebook_number}, " \
             "term code #{ gradebook_term_code}" if student.permanent_id != student_id
         student
+      end
+    end
+
+    # Get assignments scores for a given gradebook number/assignment_number
+    # Parameters:
+    # gradebook_number   - required. The specific Aeries Gradebook Number.
+    # assignment_number  - required. The specific Assignment Number.
+    #
+    # Returns
+    # - An array of AssignmentScore objects.
+    def assignments_scores(gradebook_number, assignment_number)
+      begin
+        data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/scores")
+        models=[]
+        # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+        data.each do |assignment_data|
+          models << AeriesNetApi::Models::AssignmentScore.new(assignment_data)
+        end
+        models
+      rescue => e
+        # Trap error when an invalid gradebook_number or assignmen_number is given
+        # Aeries is sending a 500 status error with a long description including following text.
+        if e.message =~ /500/ && e.message =~ /Object reference not set to an instance of an object/
+          [] # return a blank array
+        else
+          raise # raise trapped exception
+        end
       end
     end
 

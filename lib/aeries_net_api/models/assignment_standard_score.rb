@@ -1,11 +1,12 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent AssignmentCategory information extracted from Aeries site.
-    class AssignmentCategory < AeriesNetApi::Models::BaseModel
+    # Class to represent AssignmentStandardScore information extracted from Aeries site.
+    class AssignmentStandardScore < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list= %w{GradebookNumber Code Description PercentageOfGrade}
+      @@aeries_attributes_list= %w{Mark NumberCorrect NumberCorrectPossible PercentCorrect PointsEarned
+        PointsPossible StandardId}
 
       # List of methods to be used to create object's attributes dynamically.
       @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)

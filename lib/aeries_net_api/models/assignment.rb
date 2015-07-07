@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent Gradebook information extracted from Aeries site.
+    # Class to represent Assignment information extracted from Aeries site.
     class Assignment < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.
@@ -42,7 +42,6 @@ module AeriesNetApi
         end
         self.standards=standards_list
       end
-
     end
   end
 end

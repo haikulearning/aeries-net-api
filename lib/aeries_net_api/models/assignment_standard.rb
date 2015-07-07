@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent Assignment Standard information extracted from Aeries site.
+    # Class to represent AssignmentStandard information extracted from Aeries site.
     class AssignmentStandard < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.

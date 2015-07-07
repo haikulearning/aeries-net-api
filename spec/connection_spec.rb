@@ -45,6 +45,7 @@ describe AeriesNetApi::Connection do
     let(:section_number) {43}
     let(:gradebook_number) {4487750}
     let(:gradebook_term_code) {'Y'}
+    let(:assignment_number) {1}
 
     context 'schools' do
       it 'should include a schools method' do
@@ -312,7 +313,7 @@ describe AeriesNetApi::Connection do
         expect(connection.respond_to?(:assignments)).to be true
       end
 
-      it 'should return an array of assignments for a given gradebook number' do
+      it 'should return an array of Assignment objects for a given gradebook number' do
         expect(list).to be_an_instance_of Array
         expect(list.first).to be_an_instance_of(AeriesNetApi::Models::Assignment)
       end
@@ -453,6 +454,31 @@ describe AeriesNetApi::Connection do
         list=connection.gradebooks_students(777 ,gradebook_term_code)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
+      end
+    end
+
+    context 'assignments_scores' do
+      let(:list) {connection.assignments_scores(gradebook_number, assignment_number)}
+
+      it 'should include an assignments_scores method' do
+        expect(connection.respond_to?(:assignments_scores)).to be true
+      end
+
+      it 'should return an array of AssignmentScore for a given gradebook_ number/assignment_number' do
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentScore)
+      end
+
+      it 'should include an AssignmentStandardScore object array ' do
+        expect(list.first.standard_scores).to be_an_instance_of(Array)
+        expect(list.first.standard_scores.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandardScore) unless
+            list.first.standard_scores.empty?
+      end
+
+      it 'should return an empty list when an invalid gradebook and/or assignment_number code was given' do
+        scores_list=connection.assignments_scores(998,7)
+        expect(scores_list).to be_an_instance_of(Array)
+        expect(scores_list).to be_empty
       end
     end
   end
