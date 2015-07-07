@@ -404,5 +404,33 @@ describe AeriesNetApi::Connection do
         expect(program.first.student_id).to be_eql programs_list.first.student_id
       end
     end
+
+    context 'codes' do
+      let(:table_code) {'STU'} # Students table
+      let(:field_code) {'RC1'}  # field code
+      let(:list) {connection.codes(table_code, field_code)}
+
+      it 'should include a codes method' do
+        expect(connection.respond_to?(:codes)).to be true
+      end
+
+      it 'should return an array of code for a given table/field' do
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::Code)
+      end
+
+      it 'should return an array of code with same table/field given' do
+        expect(list).to be_an_instance_of Array
+        expect(list.first.table).to be_eql(table_code)
+        expect(list.first.field).to be_eql(field_code)
+      end
+
+      it 'should return an empty list when an invalid table or code was given' do
+        list=connection.codes('xxx', 'yyy')
+        expect(list).to be_an_instance_of(Array)
+        expect(list).to be_empty
+      end
+    end
+
   end
 end

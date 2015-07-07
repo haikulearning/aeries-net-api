@@ -32,7 +32,7 @@ module AeriesNetApi
     # Get school(s) information.
     # Parameters:
     # school_code  - optional.  The Aeries School Code. This is normally 1-999.  If School Code is not passed,
-    # all schools for the current district will be returned.
+    #                all schools for the current district will be returned.
     # School object contains a list of Terms.
     #
     # Returns:
@@ -69,7 +69,7 @@ module AeriesNetApi
     # Parameters:
     # school_code - required.  The Aeries School Code. This is normally 1-999.
     # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all students for the given
-    # school will be returned.
+    #               school will be returned.
     #
     # Returns array of Student.
     # Results are always returned in the form of an array because often students have multiple
@@ -87,7 +87,7 @@ module AeriesNetApi
     # Parameters:
     # school_code - required.  The Aeries School Code. This is normally 1-999.
     # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all contacts for all
-    # students for the given school will be returned.
+    #               students for the given school will be returned.
     #
     # Returns an array of Contact
     def contacts(school_code, student_id=nil)
@@ -103,7 +103,7 @@ module AeriesNetApi
     # Parameters:
     # school_code - required.  The Aeries School Code. This is normally 1-999.
     # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all classes for all
-    # students for the given school will be returned.
+    #               students for the given school will be returned.
     #
     # Returns an array of StudentClass
     def classes(school_code, student_id=nil)
@@ -118,7 +118,7 @@ module AeriesNetApi
     # Get course(s) information.
     # Parameters:
     # course_id - optional.  The Aeries Course ID (alpha-numeric). If it is not passed, all courses in the district
-    # will be returned.
+    #             will be returned.
     #
     # Returns:
     # - A single Course object if course_id was given
@@ -139,7 +139,7 @@ module AeriesNetApi
     # Get staff information.
     # Parameters:
     # staff_id - optional.  The Aeries District Staff ID (numeric).  If it is not passed, all staff records in
-    # the district will be returned.
+    #            the district will be returned.
     #
     # Returns:
     # - A single Staff object if staff_id was given
@@ -160,7 +160,7 @@ module AeriesNetApi
 
     # Get teacher(s) for a given school
     # Parameters:
-    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # school_code     - required.  The Aeries School Code. This is normally 1-999.
     # teacher_number  - optional. The School-Based Aeries Teacher Number.
     #
     # Returns
@@ -181,7 +181,7 @@ module AeriesNetApi
 
     # Get section(s) for a given school
     # Parameters:
-    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # school_code     - required.  The Aeries School Code. This is normally 1-999.
     # section_number  - optional. The School-Based Aeries Section Number.
     #
     # Returns
@@ -202,8 +202,8 @@ module AeriesNetApi
 
     # Get class roster for a given section/school
     # Parameters:
-    # school_code - required.  The Aeries School Code. This is normally 1-999.
-    # section_number  - required. The School-Based Aeries Section Number.
+    # school_code    - required.  The Aeries School Code. This is normally 1-999.
+    # section_number - required. The School-Based Aeries Section Number.
     #
     # Returns
     # - An array of StudentClass objects.
@@ -218,8 +218,8 @@ module AeriesNetApi
 
     # Get gradebooks for a given section/school
     # Parameters:
-    # school_code - required.  The Aeries School Code. This is normally 1-999.
-    # section_number  - required. The School-Based Aeries Section Number.
+    # school_code    - required.  The Aeries School Code. This is normally 1-999.
+    # section_number - required. The School-Based Aeries Section Number.
     #
     # Returns
     # - An array of Gradebook objects.
@@ -280,7 +280,7 @@ module AeriesNetApi
     # Parameters:
     # school_code - required.  The Aeries School Code. This is normally 1-999.
     # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all gpa's for all
-    # students of the school will be returned.
+    #               students of the school will be returned.
     #
     # Returns array of GPA.
     # Results are always returned in the form of an array because often students have multiple
@@ -299,16 +299,37 @@ module AeriesNetApi
     # Parameters:
     # school_code - required.  The Aeries School Code. This is normally 1-999.
     # student_id  - optional (pass 0 for all students) The Aeries District Permanent ID Number.  If it is not passed
-    # or you pass a 0 (zero) instead, all programs for all students for the given school will be returned.
+    #               or you pass a 0 (zero) instead, all programs for all students for the given school will be returned.
     #
     # Returns array of StudentProgram.
     def student_programs(school_code, student_id=nil)
       student_id ||= 0
-      data  =get_data("api/v1/schools/#{school_code}/students/#{student_id}/programs")
+      data       =get_data("api/v1/schools/#{school_code}/students/#{student_id}/programs")
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models     =[]
+      data.each do |item_data|
+        models << AeriesNetApi::Models::StudentProgram.new(item_data)
+      end
+      models
+    end
+
+    # Get code set information for a given table/field
+    # Parameters:
+    # table_code -  required.  The 3 character Aeries Table Code or the API Object name. If you know the 3
+    #               character Aeries Table Code, feel free to use it. Otherwise, use the object name returned through the
+    #               API. Examples include: "STU", "student", "CON", "contact", "course", "staff", "teacher", and "section" .
+    # field_code -  required. The 2-4 character Aeries Field Code or the API Object name. If you know the 2-4
+    #               character Aeries Field Code, feel free to use it. Otherwise, use the object name returned through the API.
+    #               Examples include: "HL", "HomeLanguage", or "HomeLanguageCode". Fields/Properties in objects ending in "Code" have
+    #               a code set associated with them. The "Field" passed to this end point can include the word "Code" or not.
+    #
+    # Returns array of Code.
+    def codes(table_code, field_code)
+      data  = get_data("api/codes/#{table_code}/#{field_code}")
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       data.each do |item_data|
-        models << AeriesNetApi::Models::StudentProgram.new(item_data)
+        models << AeriesNetApi::Models::Code.new(item_data)
       end
       models
     end

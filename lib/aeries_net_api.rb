@@ -21,6 +21,7 @@ require 'aeries_net_api/models/assignment_standard'
 require 'aeries_net_api/models/final_mark'
 require 'aeries_net_api/models/gpa'
 require 'aeries_net_api/models/student_program'
+require 'aeries_net_api/models/code'
 
 module AeriesNetApi
 
