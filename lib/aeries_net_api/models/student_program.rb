@@ -1,11 +1,12 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent GradebokTerm information extracted from Aeries site.
-    class GradebookTerm < AeriesNetApi::Models::BaseModel
+    # Class to represent Staff information extracted from Aeries site.
+    class StudentProgram < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list= %w{GradebookNumber Code Name StartDate EndDate}
+      @@aeries_attributes_list= %w{StudentID ProgramCode ProgramDescription EligibilityStartDate EligibilityEndDate
+        ParticipationStartDate ParticipationEndDate}
 
       # List of methods to be used to create object's attributes dynamically.
       @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
@@ -28,10 +29,11 @@ module AeriesNetApi
       # Overrides 'parse' method to parse dates
       def parse(aeries_data, aeries_attributes_list, setters_list)
         super
-        self.start_date=DateTime.parse(self.start_date) unless self.start_date.nil?
-        self.end_date=DateTime.parse(self.end_date) unless self.end_date.nil?
+        self.eligibility_start_date=DateTime.parse(self.eligibility_start_date) unless self.eligibility_start_date.nil?
+        self.eligibility_end_date=DateTime.parse(self.eligibility_end_date) unless self.eligibility_end_date.nil?
+        self.participation_start_date=DateTime.parse(self.participation_start_date) unless self.participation_start_date.nil?
+        self.participation_end_date=DateTime.parse(self.participation_end_date) unless self.participation_end_date.nil?
       end
-
     end
   end
 end

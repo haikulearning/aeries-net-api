@@ -378,5 +378,31 @@ describe AeriesNetApi::Connection do
         expect(gpas.first).to be_an_instance_of(AeriesNetApi::Models::GPA)
       end
     end
+
+    context 'student_programs' do
+      it 'should include a student_programs method' do
+        expect(connection.respond_to?(:student_programs)).to be true
+      end
+
+      it 'should return an empty array for an invalid school' do
+        programs=connection.student_programs(-1)
+        expect(programs).to be_instance_of Array
+        expect(programs).to be_empty
+      end
+
+      it 'should return a list of student programs for a given school' do
+        programs=connection.student_programs(school_code)
+        expect(programs).to be_instance_of Array
+        expect(programs.first).to be_an_instance_of(AeriesNetApi::Models::StudentProgram)
+      end
+
+      it 'should return a list of student programs for a given school and student id' do
+        programs_list=connection.student_programs(school_code)  # get all programs to find a valid student id
+        program=connection.student_programs(school_code, programs_list.first.student_id)
+        expect(program).to be_instance_of Array
+        expect(program.first).to be_an_instance_of(AeriesNetApi::Models::StudentProgram)
+        expect(program.first.student_id).to be_eql programs_list.first.student_id
+      end
+    end
   end
 end

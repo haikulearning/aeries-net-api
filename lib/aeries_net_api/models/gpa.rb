@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent Staff information extracted from Aeries site.
+    # Class to represent GPA information extracted from Aeries site.
     class GPA < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.

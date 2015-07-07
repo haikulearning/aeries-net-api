@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
 
-    # Class to represent Gradebook Section information extracted from Aeries site.
+    # Class to represent GradebookSection information extracted from Aeries site.
     class GradebookSection < AeriesNetApi::Models::BaseModel
 
       # List of attributes to be extracted from Aeries site.

@@ -294,6 +294,25 @@ module AeriesNetApi
       end
       models
     end
+
+    # Get student programs for a given school/student
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # student_id  - optional (pass 0 for all students) The Aeries District Permanent ID Number.  If it is not passed
+    # or you pass a 0 (zero) instead, all programs for all students for the given school will be returned.
+    #
+    # Returns array of StudentProgram.
+    def student_programs(school_code, student_id=nil)
+      student_id ||= 0
+      data  =get_data("api/v1/schools/#{school_code}/students/#{student_id}/programs")
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      data.each do |item_data|
+        models << AeriesNetApi::Models::StudentProgram.new(item_data)
+      end
+      models
+    end
+
     private
 
     def get_data(endpoint)
