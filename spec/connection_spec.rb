@@ -81,7 +81,7 @@ describe AeriesNetApi::Connection do
     end
 
     context 'students' do
-      it 'should include a terms method' do
+      it 'should include a students method' do
         expect(connection.respond_to?(:students)).to be true
       end
 
@@ -103,6 +103,7 @@ describe AeriesNetApi::Connection do
         expect(students.first).to be_an_instance_of(AeriesNetApi::Models::Student)
       end
     end
+
     context 'contacts' do
       it 'should include a contacts method' do
         expect(connection.respond_to?(:contacts)).to be true
@@ -351,6 +352,30 @@ describe AeriesNetApi::Connection do
         list=connection.final_marks(998)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
+      end
+    end
+
+    context 'gpas' do
+      it 'should include a gpas method' do
+        expect(connection.respond_to?(:gpas)).to be true
+      end
+
+      it 'should return an empty array for an invalid school' do
+        gpas=connection.gpas(-1)
+        expect(gpas).to be_instance_of Array
+        expect(gpas).to be_empty
+      end
+
+      it 'should return a list of gpas for a given school' do
+        gpas=connection.gpas(school_code)
+        expect(gpas).to be_instance_of Array
+        expect(gpas.first).to be_an_instance_of(AeriesNetApi::Models::GPA)
+      end
+
+      it 'should return a list of gpas for a given school and student id' do
+        gpas=connection.gpas(school_code, student_id)
+        expect(gpas).to be_instance_of Array
+        expect(gpas.first).to be_an_instance_of(AeriesNetApi::Models::GPA)
       end
     end
   end

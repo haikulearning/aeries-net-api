@@ -252,7 +252,6 @@ module AeriesNetApi
     # - An array of Assignment objects.
     def assignments(gradebook_number)
       data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments")
-      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       data.each do |assignment_data|
         models << AeriesNetApi::Models::Assignment.new(assignment_data)
@@ -268,7 +267,6 @@ module AeriesNetApi
     # - An array of FinalMark objects.
     def final_marks(gradebook_number)
       data  = get_data("api/v2/gradebooks/#{gradebook_number}/FinalMarks")
-      #puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       # Aeries returns an array filled with nil for an invalid gradebook number
       return models if data.empty? || data.first.nil?
@@ -278,6 +276,24 @@ module AeriesNetApi
       models
     end
 
+    # Get gpa(s) for a given school/student
+    # Parameters:
+    # school_code - required.  The Aeries School Code. This is normally 1-999.
+    # student_id  - optional. The Aeries District Permanent ID Number.  If it is not passed, all gpa's for all
+    # students of the school will be returned.
+    #
+    # Returns array of GPA.
+    # Results are always returned in the form of an array because often students have multiple
+    # records in a district if they are concurrently enrolled or have switched between schools during the school year.
+    def gpas(school_code, student_id=nil)
+      data  =get_data("api/schools/#{school_code}/gpas/#{student_id}")
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      models=[]
+      data.each do |item_data|
+        models << AeriesNetApi::Models::GPA.new(item_data)
+      end
+      models
+    end
     private
 
     def get_data(endpoint)
