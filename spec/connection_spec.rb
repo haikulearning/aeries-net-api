@@ -320,6 +320,13 @@ describe AeriesNetApi::Connection do
         expect(list.first.assignment_category).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
       end
 
+      it 'should include an AssignmentStandard object array ' do
+        expect(list.first.standards).to be_an_instance_of(Array)
+        expect(list.first.standards.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandard) unless
+            list.first.standards.empty?
+        puts list.first.attributes
+      end
+
       it 'should return an empty list when an invalid gradebook code was given' do
         list=connection.assignments(998)
         expect(list).to be_an_instance_of(Array)

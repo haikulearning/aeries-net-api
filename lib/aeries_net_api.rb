@@ -17,6 +17,7 @@ require 'aeries_net_api/models/assignment_category'
 require 'aeries_net_api/models/assignment'
 require 'aeries_net_api/models/gradebook_section'
 require 'aeries_net_api/models/gradebook_term'
+require 'aeries_net_api/models/assignment_standard'
 
 module AeriesNetApi
 

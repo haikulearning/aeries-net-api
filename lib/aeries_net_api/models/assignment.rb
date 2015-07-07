@@ -1,5 +1,3 @@
-# Todo: convert dates.
-
 module AeriesNetApi
   module Models
 
@@ -30,11 +28,19 @@ module AeriesNetApi
         model_attributes(@@setters_list)
       end
 
-      # Overrides parse to create array of terms
+      # Overrides parse to parse dates, create category object and standards array
       def parse(aeries_data, aeries_attributes_list, setters_list)
         super
+        self.date_assigned=DateTime.parse(self.date_assigned) unless self.date_assigned.nil?
+        self.date_due=DateTime.parse(self.date_due) unless self.date_due.nil?
+        self.due_time=DateTime.parse(self.due_time) unless self.due_time.nil?
         category=self.assignment_category
         self.assignment_category=AeriesNetApi::Models::AssignmentCategory.new(category)
+        standards_list=[]
+        self.standards.each do |item|
+          standards_list << AeriesNetApi::Models::AssignmentStandard.new(item)
+        end
+        self.standards=standards_list
       end
 
     end
