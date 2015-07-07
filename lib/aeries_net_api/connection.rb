@@ -326,12 +326,37 @@ module AeriesNetApi
     # Returns array of Code.
     def codes(table_code, field_code)
       data  = get_data("api/codes/#{table_code}/#{field_code}")
-      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       models=[]
       data.each do |item_data|
         models << AeriesNetApi::Models::Code.new(item_data)
       end
       models
+    end
+
+    # Get student(s) for a given gradebook number/gradebook term
+    # Parameters:
+    # gradebook_number    - required.  The specific Aeries Gradebook Number.
+    # gradebook_term_code - required.  The term code from the Gradebook object (Gradebook --> Terms --> Term Code)
+    # student_id          - optional. The Aeries District Permanent ID Number.  If it is not passed, all students
+    #                       for given gradebook/term will be returned.
+    # Returns
+    # - An array of GradebookStudent objects if student_id is ommited.
+    # - A single GradebookStudent object if student_id is passed.
+    def gradebooks_students(gradebook_number, gradebook_term_code, student_id=nil)
+      data = get_data("api/v2/gradebooks/#{gradebook_number}/#{gradebook_term_code}/students/#{student_id}")
+      if student_id.nil?
+        models=[]
+        data.each do |item_data|
+          models << AeriesNetApi::Models::GradebookStudent.new(item_data)
+        end
+        models
+      else
+        # puts data.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+        student=AeriesNetApi::Models::GradebookStudent.new(data)
+        raise RuntimeError, "Invalid student_id #{student_id} for gradebook #{gradebook_number}, " \
+            "term code #{ gradebook_term_code}" if student.permanent_id != student_id
+        student
+      end
     end
 
     private

@@ -44,6 +44,7 @@ describe AeriesNetApi::Connection do
     let(:school_code) { 994 }
     let(:section_number) {43}
     let(:gradebook_number) {4487750}
+    let(:gradebook_term_code) {'Y'}
 
     context 'schools' do
       it 'should include a schools method' do
@@ -305,8 +306,6 @@ describe AeriesNetApi::Connection do
     end
 
     context 'assignments' do
-
-
       let(:list) {connection.assignments(gradebook_number)}
 
       it 'should include an assignments method' do
@@ -432,5 +431,29 @@ describe AeriesNetApi::Connection do
       end
     end
 
+    context 'gradebooks_students' do
+      it 'should include a gradebooks_students method' do
+        expect(connection.respond_to?(:gradebooks_students)).to be true
+      end
+
+      it 'should return an array of student objects for a given gradebook_number/term_code' do
+        list = connection.gradebooks_students(gradebook_number,gradebook_term_code)
+        expect(list).to be_an_instance_of Array
+        expect(list.first).to be_an_instance_of(AeriesNetApi::Models::GradebookStudent)
+      end
+
+      it 'should return a student object for a given gradebook_number/term_code/student' do
+        list = connection.gradebooks_students(gradebook_number,gradebook_term_code)
+        student = connection.gradebooks_students(gradebook_number,gradebook_term_code,list.first.permanent_id)
+        expect(student).to be_an_instance_of AeriesNetApi::Models::GradebookStudent
+        expect(list.first.permanent_id).to be_eql student.permanent_id
+      end
+
+      it 'should return an empty list when an invalid gradebook code was given' do
+        list=connection.gradebooks_students(777 ,gradebook_term_code)
+        expect(list).to be_an_instance_of(Array)
+        expect(list).to be_empty
+      end
+    end
   end
 end
