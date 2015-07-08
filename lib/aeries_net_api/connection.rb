@@ -244,19 +244,26 @@ module AeriesNetApi
       AeriesNetApi::Models::Gradebook.new(data)
     end
 
-    # Get assignments for a given gradebook number
+    # Get assignment(s) for a given gradebook/asignment number
     # Parameters:
-    # gradebook_number - required.  The specific Aeries Gradebook Number.
-    #
+    # gradebook_number  - required.  The specific Aeries Gradebook Number.
+    # assignment_number - optional.  The specific Assignment Number. Returns all assignments for gradebook if omitted
     # Returns
-    # - An array of Assignment objects.
-    def assignments(gradebook_number)
-      data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments")
+    # - An array of Assignment objects if assignment number is omitted.
+    # - An assignment object if assignment number is passed
+    def assignments(gradebook_number,assignment_number=nil)
+      data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}")
+      if assignment_number.nil?
       models=[]
       data.each do |assignment_data|
         models << AeriesNetApi::Models::Assignment.new(assignment_data)
       end
       models
+      else
+        raise "Assignment #{assignment_number} doesn't exist for gradebook #{gradebook_number}" if data.nil?
+        AeriesNetApi::Models::Assignment.new(data)
+      end
+
     end
 
     # Get final marks for a given gradebook number
@@ -364,7 +371,7 @@ module AeriesNetApi
     # assignment_number  - required. The specific Assignment Number.
     #
     # Returns
-    # - An array of AssignmentScore objects.
+    # An array of AssignmentScore objects.
     def assignments_scores(gradebook_number, assignment_number)
       begin
         data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/scores")
@@ -385,13 +392,61 @@ module AeriesNetApi
       end
     end
 
+
+
+    # Update assignments scores for a given gradebook number/assignment_number
+    # Parameters:
+    # gradebook_number    - required.  The specific Aeries Gradebook Number.
+    # assignment_number   - required.  The specific Assignment Number.
+    # assignment_scores   - required.  Array of AeriesNetApi::Update::AssignmentScoreUpdate
+    # Returns
+    # An array of AssignmentScore objects.
+    def update_gradebook_scores(gradebook_number, assignment_number, assignment_scores )
+      raise ArgumentError unless assignment_scores.is_a?(Array)
+      assignment_scores.each_with_index {|item,i| raise ArgumentError, "Invalid element(#{i}) in array: #{item.inspect}, " \
+      'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
+       item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate }
+      data  = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores",assignment_scores.to_json)
+      models=[]
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      data.each do |assignment_data|
+        models << AeriesNetApi::Models::AssignmentScore.new(assignment_data)
+      end
+      models
+    end
+
     private
 
+    # Send request to Aeries site
+    # Parameters:
+    # endpoint    - Url to be used to request data
+    #
+    # Returns
+    # A hash contained JSON data parsed.
     def get_data(endpoint)
       response=@connection.get do |req|
         req.url endpoint
         req.options.timeout      = 120 # read timeout in seconds
         req.options.open_timeout = 60 # open timeout in seconds
+      end
+      raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status==200
+      raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match /json/
+      JSON.parse(response.body)
+    end
+
+    # Post update data toAeries site
+    # Parameters:
+    # endpoint    - Url to be used to request data
+    # body_content     - Body content of posted data.
+    # Returns
+    # ???
+    def post_data(endpoint, body_content)
+      response=@connection.post do |req|
+        req.url endpoint
+        req.options.timeout      = 120 # read timeout in seconds
+        req.options.open_timeout = 60 # open timeout in seconds
+        req.headers['Content-Type'] = 'application/json'
+        req.body = body_content
       end
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status==200
       raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match /json/

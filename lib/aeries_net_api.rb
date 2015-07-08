@@ -26,6 +26,9 @@ require 'aeries_net_api/models/gpa'
 require 'aeries_net_api/models/student_program'
 require 'aeries_net_api/models/code'
 
+require 'aeries_net_api/update/assignment_score_update'
+require 'aeries_net_api/update/assignment_standard_score_update'
+
 module AeriesNetApi
 
 end

@@ -42,10 +42,10 @@ describe AeriesNetApi::Connection do
     let(:connection) { AeriesNetApi::Connection.new(:certificate => RSpec.configuration.aeries_certificate, :url => RSpec.configuration.aeries_url) }
     let(:student_id) { 99400003 }
     let(:school_code) { 994 }
-    let(:section_number) {43}
-    let(:gradebook_number) {4487750}
-    let(:gradebook_term_code) {'Y'}
-    let(:assignment_number) {1}
+    let(:section_number) { 43 }
+    let(:gradebook_number) { 5350229 }
+    let(:gradebook_term_code) { 'Y' }
+    let(:assignment_number) { 1 }
 
     context 'schools' do
       it 'should include a schools method' do
@@ -170,7 +170,7 @@ describe AeriesNetApi::Connection do
     end
 
     context 'staff' do
-      let(:staff_id) {990001}
+      let(:staff_id) { 990001 }
 
       it 'should include a staff method' do
         expect(connection.respond_to?(:staff)).to be true
@@ -199,7 +199,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return teacher information for a given teacher number' do
-        teacher=connection.teachers(school_code,601)
+        teacher=connection.teachers(school_code, 601)
         expect(teacher).to be_an_instance_of(AeriesNetApi::Models::Teacher)
       end
 
@@ -210,7 +210,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should raise an error for a non existent teacher' do
-        expect { connection.teachers(school_code,1) }.to raise_error(StandardError, %r[#{school_code}])
+        expect { connection.teachers(school_code, 1) }.to raise_error(StandardError, %r[#{school_code}])
       end
     end
 
@@ -220,7 +220,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return section information for a given section number' do
-        section=connection.sections(school_code,section_number)
+        section=connection.sections(school_code, section_number)
         expect(section).to be_an_instance_of(AeriesNetApi::Models::Section)
         expect(section.section_number).to be_eql(section_number)
       end
@@ -238,7 +238,7 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should raise an error for a non existent section' do
-        expect { connection.sections(school_code,145) }.to raise_error(StandardError, /145/)
+        expect { connection.sections(school_code, 145) }.to raise_error(StandardError, /145/)
       end
     end
 
@@ -248,20 +248,20 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return class roster for a given school/section number' do
-        list=connection.class_roster(school_code,section_number)
+        list=connection.class_roster(school_code, section_number)
         expect(list).to be_an_instance_of Array
         expect(list.first).to be_an_instance_of(AeriesNetApi::Models::StudentClass)
       end
 
       it 'should return an empty list when an invalid school code was given' do
-        list=connection.class_roster(0,998)
+        list=connection.class_roster(0, 998)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
       end
     end
 
     context 'gradebooks' do
-      let(:gradebooks) {connection.gradebooks(school_code,section_number)}
+      let(:gradebooks) { connection.gradebooks(school_code, section_number) }
 
       it 'should include a gradebooks method' do
         expect(connection.respond_to?(:gradebooks)).to be true
@@ -298,16 +298,16 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return a single Gradebook object for a given gradebook number' do
-        gradebooks=connection.gradebooks(school_code, section_number)
+        gradebooks     =connection.gradebooks(school_code, section_number)
         first_gradebook=gradebooks.first
-        gradebook=connection.gradebook(first_gradebook.gradebook_number)
+        gradebook      =connection.gradebook(first_gradebook.gradebook_number)
         expect(first_gradebook.gradebook_number).to be_eql(gradebook.gradebook_number)
         expect first_gradebook.eql? gradebook
       end
     end
 
     context 'assignments' do
-      let(:list) {connection.assignments(gradebook_number)}
+      let(:list) { connection.assignments(gradebook_number) }
 
       it 'should include an assignments method' do
         expect(connection.respond_to?(:assignments)).to be true
@@ -324,8 +324,7 @@ describe AeriesNetApi::Connection do
 
       it 'should include an AssignmentStandard object array ' do
         expect(list.first.standards).to be_an_instance_of(Array)
-        expect(list.first.standards.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandard) unless
-            list.first.standards.empty?
+        expect(list.first.standards.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandard) unless list.first.standards.empty?
       end
 
       it 'should return an empty list when an invalid gradebook code was given' do
@@ -333,11 +332,18 @@ describe AeriesNetApi::Connection do
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
       end
+
+      it 'should return a single AssignmentObject when assignment number is passed' do
+        assignment_number = list.first.assignment_number
+        assignment        = connection.assignments(gradebook_number, assignment_number)
+        expect(assignment).to be_an_instance_of(AeriesNetApi::Models::Assignment)
+        expect(assignment.assignment_number).to eql assignment_number
+      end
     end
 
     context 'final marks' do
 
-      let(:list) {connection.final_marks(gradebook_number)}
+      let(:list) { connection.final_marks(gradebook_number) }
 
       it 'should include an final_marks method' do
         expect(connection.respond_to?(:final_marks)).to be true
@@ -397,8 +403,8 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return a list of student programs for a given school and student id' do
-        programs_list=connection.student_programs(school_code)  # get all programs to find a valid student id
-        program=connection.student_programs(school_code, programs_list.first.student_id)
+        programs_list=connection.student_programs(school_code) # get all programs to find a valid student id
+        program      =connection.student_programs(school_code, programs_list.first.student_id)
         expect(program).to be_instance_of Array
         expect(program.first).to be_an_instance_of(AeriesNetApi::Models::StudentProgram)
         expect(program.first.student_id).to be_eql programs_list.first.student_id
@@ -406,9 +412,9 @@ describe AeriesNetApi::Connection do
     end
 
     context 'codes' do
-      let(:table_code) {'STU'} # Students table
-      let(:field_code) {'RC1'}  # field code
-      let(:list) {connection.codes(table_code, field_code)}
+      let(:table_code) { 'STU' } # Students table
+      let(:field_code) { 'RC1' } # field code
+      let(:list) { connection.codes(table_code, field_code) }
 
       it 'should include a codes method' do
         expect(connection.respond_to?(:codes)).to be true
@@ -438,27 +444,27 @@ describe AeriesNetApi::Connection do
       end
 
       it 'should return an array of student objects for a given gradebook_number/term_code' do
-        list = connection.gradebooks_students(gradebook_number,gradebook_term_code)
+        list = connection.gradebooks_students(gradebook_number, gradebook_term_code)
         expect(list).to be_an_instance_of Array
         expect(list.first).to be_an_instance_of(AeriesNetApi::Models::GradebookStudent)
       end
 
       it 'should return a student object for a given gradebook_number/term_code/student' do
-        list = connection.gradebooks_students(gradebook_number,gradebook_term_code)
-        student = connection.gradebooks_students(gradebook_number,gradebook_term_code,list.first.permanent_id)
+        list    = connection.gradebooks_students(gradebook_number, gradebook_term_code)
+        student = connection.gradebooks_students(gradebook_number, gradebook_term_code, list.first.permanent_id)
         expect(student).to be_an_instance_of AeriesNetApi::Models::GradebookStudent
         expect(list.first.permanent_id).to be_eql student.permanent_id
       end
 
       it 'should return an empty list when an invalid gradebook code was given' do
-        list=connection.gradebooks_students(777 ,gradebook_term_code)
+        list=connection.gradebooks_students(777, gradebook_term_code)
         expect(list).to be_an_instance_of(Array)
         expect(list).to be_empty
       end
     end
 
     context 'assignments_scores' do
-      let(:list) {connection.assignments_scores(gradebook_number, assignment_number)}
+      let(:list) { connection.assignments_scores(gradebook_number, assignment_number) }
 
       it 'should include an assignments_scores method' do
         expect(connection.respond_to?(:assignments_scores)).to be true
@@ -471,14 +477,73 @@ describe AeriesNetApi::Connection do
 
       it 'should include an AssignmentStandardScore object array ' do
         expect(list.first.standard_scores).to be_an_instance_of(Array)
-        expect(list.first.standard_scores.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandardScore) unless
-            list.first.standard_scores.empty?
+        expect(list.first.standard_scores.first).to be_an_instance_of(AeriesNetApi::Models::AssignmentStandardScore) unless list.first.standard_scores.empty?
       end
 
       it 'should return an empty list when an invalid gradebook and/or assignment_number code was given' do
-        scores_list=connection.assignments_scores(998,7)
+        scores_list=connection.assignments_scores(998, 7)
         expect(scores_list).to be_an_instance_of(Array)
         expect(scores_list).to be_empty
+      end
+    end
+
+    context 'update_gradebook_scores' do
+
+      it 'should contains an update_gradebook_scores method' do
+        expect(connection.respond_to?(:update_gradebook_scores)).to be true
+      end
+
+      it 'should validate parameter received as an array of AssignmentScoreUpdate objects' do
+        list=(1..3).map { |i| AeriesNetApi::Update::AssignmentScoreUpdate.new }
+        expect { connection.update_gradebook_scores(gradebook_number, assignment_number, list) }.to_not raise_error
+        expect { connection.update_gradebook_scores(gradebook_number, assignment_number, nil) }.to raise_error(ArgumentError)
+        expect { connection.update_gradebook_scores(gradebook_number, assignment_number, [1, 2, \
+          AeriesNetApi::Update::AssignmentScoreUpdate.new]) }.to raise_error(ArgumentError)
+      end
+
+      it 'should update score using only AssignmentScoreUpdate object ' do
+        # Get current data
+        scores_list    = connection.assignments_scores(gradebook_number, assignment_number)
+        score          = scores_list.first
+        number_correct = Random.new.rand(1.00..5.00).round(4)
+        puts number_correct
+        item         = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id   => score.permanent_id,
+                                                                       :number_correct => number_correct,
+                                                                       :date_completed => Date.today)
+        updated_list = connection.update_gradebook_scores(gradebook_number, assignment_number, [item])
+        updated      = updated_list.first
+        expect(updated.permanent_id).to eql(score.permanent_id)
+        expect(updated.number_correct).to eql(number_correct)
+
+      end
+
+      it 'should update scores using aeries_standard_id if score has standard_scores' do
+        # Get current data
+        scores_list = connection.assignments_scores(gradebook_number, assignment_number)
+        # Look for an score with standard scores
+        score       = nil
+        scores_list.each do |item|
+          if !item.standard_scores.empty?
+            score=item
+            break
+          end
+        end
+        if !score.nil?
+          assignment = connection.assignments(gradebook_number, assignment_number)
+          puts assignment.inspect
+          number_correct  = Random.new.rand(1.00..5.00).round(4)
+          standard_scores = [AeriesNetApi::Update::AssignmentStandardScoreUpdate.new(
+                                 :aeries_standard_id => assignment.standards.first.standard_id,
+                                 :number_correct     => number_correct)]
+          item            = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id    => score.permanent_id,
+                                                                            :date_completed  => Date.today,
+                                                                            :standard_scores => standard_scores)
+          updated_list    = connection.update_gradebook_scores(gradebook_number, assignment_number, [item])
+          updated         = updated_list.first
+          expect(updated.permanent_id).to eql(score.permanent_id)
+          expect(updated.number_correct).to eql(number_correct)
+        end
+
       end
     end
   end
