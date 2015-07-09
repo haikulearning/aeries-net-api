@@ -1,8 +1,7 @@
-# Class to represent information to be sent to Aeries to update Gradebook Assignment Scores
 module AeriesNetApi
   module Update
+    # Class to represent information to be sent to Aeries to update Gradebook Assignment Scores
     class AssignmentScoreUpdate
-
       # Student District Permanent ID Number.
       # Type: Unsigned integer
       attr_accessor :permanent_id
@@ -21,7 +20,7 @@ module AeriesNetApi
 
       # Creates a new instance
       # Parameters: Hash with these optional keys: permanent_id, number_correct, date_completed, standard_scores
-      def initialize(attributes={})
+      def initialize(attributes = {})
         self.permanent_id    = attributes.delete(:permanent_id)
         self.number_correct  = attributes.delete(:number_correct)
         self.date_completed  = attributes.delete(:date_completed)
@@ -30,11 +29,11 @@ module AeriesNetApi
       end
 
       # Overrides to_json method to use Aeries name for objects
-      def to_json(options={})
-        json_hash={'PermanentId'=> permanent_id}
-        json_hash['NumberCorrect']= number_correct unless number_correct.nil?
-        json_hash['DateCompleted']=date_completed.to_s unless date_completed.nil?
-        json_hash['StandardScores']=standard_scores
+      def to_json(_options = {})
+        json_hash = { 'PermanentId' => permanent_id }
+        json_hash['NumberCorrect'] = number_correct unless number_correct.nil?
+        json_hash['DateCompleted'] = date_completed.to_s unless date_completed.nil?
+        json_hash['StandardScores'] = standard_scores
         json_hash.to_json
       end
     end
