@@ -1,19 +1,18 @@
 module AeriesNetApi
   module Models
-
     # Class to represent Section information extracted from Aeries site.
     class Section < AeriesNetApi::Models::BaseModel
-
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list= %w{SchoolCode SectionNumber Period PeriodBlock Semester Days CourseID TeacherNumber1
-        TeacherNumber2 TeacherNumber3 HighlyQualifiedStatusCode1 HighlyQualifiedStatusCode2 HighlyQualifiedStatusCode3
-        Room Credit SexRestriction LowGrade HighGrade MaxStudents TotalStudents TotalBoys TotalGirls InactiveStatusCode}
+      @@aeries_attributes_list = %w(SchoolCode SectionNumber Period PeriodBlock Semester Days CourseID TeacherNumber1
+                                    TeacherNumber2 TeacherNumber3 HighlyQualifiedStatusCode1 HighlyQualifiedStatusCode2
+                                    HighlyQualifiedStatusCode3 Room Credit SexRestriction LowGrade HighGrade MaxStudents
+                                    TotalStudents TotalBoys TotalGirls InactiveStatusCode)
 
       # List of methods to be used to create object's attributes dynamically.
-      @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
+      @@setters_list = process_aeries_attributes(@@aeries_attributes_list)
 
       # Creates a new object from data received from Aeries site.  It creates a new empty object if no data is received.
-      def initialize(aeries_data=nil)
+      def initialize(aeries_data = nil)
         parse(aeries_data, @@aeries_attributes_list, @@setters_list) if aeries_data.present?
       end
 
@@ -26,7 +25,6 @@ module AeriesNetApi
       def attributes
         model_attributes(@@setters_list)
       end
-
     end
   end
 end
