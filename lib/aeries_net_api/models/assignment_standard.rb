@@ -1,18 +1,16 @@
 module AeriesNetApi
   module Models
-
     # Class to represent AssignmentStandard information extracted from Aeries site.
     class AssignmentStandard < AeriesNetApi::Models::BaseModel
-
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list= %w{AcademicBenchmarkId AssignmentNumber GradebookNumber NumberCorrectPossible
-        StandardDescription StandardId}
+      @@aeries_attributes_list = %w(AcademicBenchmarkId AssignmentNumber GradebookNumber NumberCorrectPossible
+                                    StandardDescription StandardId)
 
       # List of methods to be used to create object's attributes dynamically.
-      @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
+      @@setters_list = process_aeries_attributes(@@aeries_attributes_list)
 
       # Creates a new object from data received from Aeries site.  It creates a new empty object if no data is received.
-      def initialize(aeries_data=nil)
+      def initialize(aeries_data = nil)
         parse(aeries_data, @@aeries_attributes_list, @@setters_list) if aeries_data.present?
       end
 
@@ -25,7 +23,6 @@ module AeriesNetApi
       def attributes
         model_attributes(@@setters_list)
       end
-
     end
   end
 end
