@@ -1,7 +1,7 @@
 module AeriesNetApi
   module Models
+    # Base class for al Models.
     class BaseModel
-
       # Load json elements into dynamically created attributes
       def parse(aeries_data, aeries_attributes_list, setters_list)
         return if aeries_data.blank?
@@ -15,7 +15,7 @@ module AeriesNetApi
       # aeries_attributes - List of Aeries attributes to be stored.
       # Returns list of methods to be invoked when parseing object
       def self.process_aeries_attributes(aeries_attributes)
-        return_list=aeries_attributes.map { |attribute| "#{self.underscore(attribute)}=".to_sym }
+        return_list = aeries_attributes.map { |attribute| "#{underscore(attribute)}=".to_sym }
         return_list.each do |attribute|
           # removes '=' from attribute name
           attr_accessor attribute[0..-2]
@@ -31,11 +31,11 @@ module AeriesNetApi
       # Return
       # Hash of attributes with their values
       def model_attributes(setters_list)
-        attributes={}
+        attributes = {}
         setters_list.each do |setter|
-          attribute=setter[0..-2] # get rid of =
+          attribute = setter[0..-2] # get rid of =
           value = send(attribute)
-          attributes[attribute.to_sym]=value
+          attributes[attribute.to_sym] = value
         end
         attributes
       end
@@ -46,8 +46,8 @@ module AeriesNetApi
       # Return
       # String with similar content to Object#inspect
       def model_inspect(setters_list)
-        attributes_list=self.model_attributes(setters_list)
-        "#<#{self.class}:0x#{sprintf('%014x',self.object_id<<1)} #{attributes_list.inspect}>"
+        attributes_list = model_attributes(setters_list)
+        "#<#{self.class}:0x#{format('%014x', object_id << 1)} #{attributes_list.inspect}>"
       end
 
       # Convert Camel case words into underscore separated words.
@@ -57,12 +57,11 @@ module AeriesNetApi
       # Return
       # Word converted to snake case
       def self.underscore(camel_case_word)
-        camel_case_word.gsub(/::/, '/').
-            gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
-            gsub(/([a-z\d])([A-Z])/, '\1_\2').
-            tr('-', '_').downcase
+        camel_case_word.gsub(/::/, '/')
+          .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+          .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+          .tr('-', '_').downcase
       end
-
     end
   end
 end
