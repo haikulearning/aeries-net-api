@@ -9,4 +9,4 @@ Style/ClassVars:
 Metrics/MethodLength:
   Max: 50
 Metrics/AbcSize:
-  Max: 25
+  Max: 35
