@@ -6,3 +6,7 @@ Style/HashSyntax:
   Enabled: false
 Style/ClassVars:
   Enabled: false
+Metrics/MethodLength:
+  Max: 50
+Metrics/AbcSize:
+  Max: 25
