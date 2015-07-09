@@ -1,15 +1,8 @@
-#inherit_from: .rubocop_todo.yml
-Style/Encoding:
-  Enabled: false
-
 Metrics/LineLength:
-  Max: 120
-
-Metrics/MethodLength:
-  Max: 50
-
-Metrics/AbcSize:
-  Max: 25
-
+  Max: 200
+Style/SignalException:
+  Enabled: false
+Style/HashSyntax:
+  Enabled: false
 Style/ClassVars:
   Enabled: false
