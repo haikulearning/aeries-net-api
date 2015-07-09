@@ -1,18 +1,17 @@
 module AeriesNetApi
   module Models
-
     # Class to represent School information extracted from Aeries site.
     class School < AeriesNetApi::Models::BaseModel
-
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list= %w{SchoolCode Name InactiveStatusCode Address AddressCity AddressState AddressZipCode AddressZipExt DoNotReport StateCountyID StateDistrictID
-           StateSchoolID LowGradeLevel HighGradeLevel Terms}
+      @@aeries_attributes_list = %w(SchoolCode Name InactiveStatusCode Address AddressCity AddressState AddressZipCode
+                                    AddressZipExt DoNotReport StateCountyID StateDistrictID StateSchoolID LowGradeLevel
+                                    HighGradeLevel Terms)
 
       # List of methods to be used to create object's attributes dynamically.
-      @@setters_list = self.process_aeries_attributes(@@aeries_attributes_list)
+      @@setters_list = process_aeries_attributes(@@aeries_attributes_list)
 
       # Creates a new object from data received from Aeries site.  It creates a new empty object if no data is received.
-      def initialize(aeries_data=nil)
+      def initialize(aeries_data = nil)
         parse(aeries_data, @@aeries_attributes_list, @@setters_list) if aeries_data.present?
       end
 
@@ -29,13 +28,12 @@ module AeriesNetApi
       # Overrides parse to create array of terms
       def parse(aeries_data, aeries_attributes_list, setters_list)
         super
-        terms_list=[]
-        self.terms.each do |term|
+        terms_list = []
+        terms.each do |term|
           terms_list << AeriesNetApi::Models::Term.new(term)
         end
-        self.terms=terms_list
+        self.terms = terms_list
       end
-
     end
   end
 end
