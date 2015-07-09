@@ -1,0 +1,8 @@
+Metrics/LineLength:
+  Max: 200
+Style/SignalException:
+  Enabled: false
+Style/HashSyntax:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
