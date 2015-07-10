@@ -4,8 +4,8 @@ require 'faraday'
 require 'json'
 
 module AeriesNetApi
+  # Class to interact with Aeries API.  It creates connection to Aeries site and send required REST requests.
   class Connection
-
     CONFIGURATION_FILE = 'aeries_net_api_config.yml'
     attr_accessor :aeries_certificate, :aeries_url
 
@@ -17,16 +17,18 @@ module AeriesNetApi
     # Any other  parameter raises an error.
     # If any of these parameters is missing, program looks for configuration file 'aeries_net_api_config.yml'
     # in current working directory and loads parameters from keys 'url' and/or 'certificate'
-    def initialize(connection_parameters={})
-
-      self.aeries_certificate=connection_parameters.delete(:certificate)
-      self.aeries_url        =connection_parameters.delete(:url)
+    def initialize(connection_parameters = {})
+      self.aeries_certificate = connection_parameters.delete(:certificate)
+      self.aeries_url         = connection_parameters.delete(:url)
       raise ArgumentError, "Invalid parameter(s): #{connection_parameters.keys.join(', ')}" if connection_parameters.any?
-      load_configuration_file if self.aeries_certificate.blank? || self.aeries_url.blank?
+      load_configuration_file if aeries_certificate.blank? || aeries_url.blank?
       raise ArgumentError, 'Please supply :certificate parameter' if aeries_certificate.nil?
       raise ArgumentError, 'Please supply :url parameter' if aeries_url.nil?
-      @connection = Faraday::Connection.new(self.aeries_url, :headers => { :'AERIES-CERT' => aeries_certificate,
-                                                                           :accept        => 'application/json, text/html, application/xhtml+xml, */*' }, :ssl => { :verify => false })
+      @connection =
+          Faraday::Connection.new(aeries_url,
+                                  :headers => { :'AERIES-CERT' => aeries_certificate,
+                                                :accept        => 'application/json, text/html, application/xhtml+xml, */*' },
+                                  :ssl     => { :verify => false })
     end
 
     # Get school(s) information.
@@ -38,10 +40,10 @@ module AeriesNetApi
     # Returns:
     # - A single School object if school_code was given
     # - An array of School objects if school_code was omitted.
-    def schools(school_code=nil)
-      data=get_data("api/v2/schools/#{school_code}")
+    def schools(school_code = nil)
+      data = get_data("api/v2/schools/#{school_code}")
       if school_code.nil?
-        models=[]
+        models = []
         data.each do |school_data|
           models << AeriesNetApi::Models::School.new(school_data)
         end
@@ -57,8 +59,8 @@ module AeriesNetApi
     #
     # Returns an array of Term objects.
     def terms(school_code)
-      data  =get_data("api/v2/schools/#{school_code}/terms")
-      models=[]
+      data   = get_data("api/v2/schools/#{school_code}/terms")
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::Term.new(item_data)
       end
@@ -74,9 +76,9 @@ module AeriesNetApi
     # Returns array of Student.
     # Results are always returned in the form of an array because often students have multiple
     # records in a district if they are concurrently enrolled or have switched between schools during the school year.
-    def students(school_code, student_id=nil)
-      data  =get_data("api/schools/#{school_code}/students/#{student_id}")
-      models=[]
+    def students(school_code, student_id = nil)
+      data   = get_data("api/schools/#{school_code}/students/#{student_id}")
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::Student.new(item_data)
       end
@@ -90,9 +92,9 @@ module AeriesNetApi
     #               students for the given school will be returned.
     #
     # Returns an array of Contact
-    def contacts(school_code, student_id=nil)
-      data  =get_data("api/schools/#{school_code}/contacts/#{student_id}")
-      models=[]
+    def contacts(school_code, student_id = nil)
+      data   = get_data("api/schools/#{school_code}/contacts/#{student_id}")
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::Contact.new(item_data)
       end
@@ -106,9 +108,9 @@ module AeriesNetApi
     #               students for the given school will be returned.
     #
     # Returns an array of StudentClass
-    def classes(school_code, student_id=nil)
-      data  =get_data("api/schools/#{school_code}/classes/#{student_id}")
-      models=[]
+    def classes(school_code, student_id = nil)
+      data   = get_data("api/schools/#{school_code}/classes/#{student_id}")
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::StudentClass.new(item_data)
       end
@@ -123,12 +125,12 @@ module AeriesNetApi
     # Returns:
     # - A single Course object if course_id was given
     # - An array of Course objects if course_id was omitted.
-    def courses(course_id=nil)
-      data=get_data("api/courses/#{course_id}")
+    def courses(course_id = nil)
+      data = get_data("api/courses/#{course_id}")
       if course_id.present?
         AeriesNetApi::Models::Course.new(data)
       else
-        models=[]
+        models = []
         data.each do |course_data|
           models << AeriesNetApi::Models::Course.new(course_data)
         end
@@ -144,13 +146,13 @@ module AeriesNetApi
     # Returns:
     # - A single Staff object if staff_id was given
     # - An array of Staff objects if staff_id was omitted.
-    def staff(staff_id=nil)
-      data=get_data("api/v2/staff/#{staff_id}")
+    def staff(staff_id = nil)
+      data = get_data("api/v2/staff/#{staff_id}")
       if staff_id.present?
         raise ArgumentError, "Staff member with id #{staff_id} doesn't exist" if data.blank?
         AeriesNetApi::Models::Staff.new(data.first) # This endpoint always returns an array.
       else
-        models=[]
+        models = []
         data.each do |member_data|
           models << AeriesNetApi::Models::Staff.new(member_data)
         end
@@ -166,10 +168,10 @@ module AeriesNetApi
     # Returns
     # - A single Teacher object if teacher_number was given
     # - An array of Teacher objects if teacher_number was omitted.
-    def teachers(school_code, teacher_number=nil)
+    def teachers(school_code, teacher_number = nil)
       data = get_data("api/schools/#{school_code}/teachers/#{teacher_number}")
       if teacher_number.nil?
-        models=[]
+        models = []
         data.each do |teacher_data|
           models << AeriesNetApi::Models::Teacher.new(teacher_data)
         end
@@ -187,10 +189,10 @@ module AeriesNetApi
     # Returns
     # - A single Section object if section_number was given
     # - An array of Section objects if section_number was omitted.
-    def sections(school_code, section_number=nil)
+    def sections(school_code, section_number = nil)
       data = get_data("api/schools/#{school_code}/sections/#{section_number}")
       if section_number.nil?
-        models=[]
+        models = []
         data.each do |section_data|
           models << AeriesNetApi::Models::Section.new(section_data)
         end
@@ -208,8 +210,8 @@ module AeriesNetApi
     # Returns
     # - An array of StudentClass objects.
     def class_roster(school_code, section_number)
-      data  = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
-      models=[]
+      data   = get_data("api/v1/schools/#{school_code}/sections/#{section_number}/students")
+      models = []
       data.each do |class_data|
         models << AeriesNetApi::Models::StudentClass.new(class_data)
       end
@@ -224,9 +226,8 @@ module AeriesNetApi
     # Returns
     # - An array of Gradebook objects.
     def gradebooks(school_code, section_number)
-      data  = get_data("api/v2/schools/#{school_code}/sections/#{section_number}/gradebooks")
-      #puts data.first['Terms'].first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
-      models=[]
+      data   = get_data("api/v2/schools/#{school_code}/sections/#{section_number}/gradebooks")
+      models = []
       data.each do |gradebook_data|
         models << AeriesNetApi::Models::Gradebook.new(gradebook_data)
       end
@@ -251,19 +252,18 @@ module AeriesNetApi
     # Returns
     # - An array of Assignment objects if assignment number is omitted.
     # - An assignment object if assignment number is passed
-    def assignments(gradebook_number,assignment_number=nil)
-      data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}")
+    def assignments(gradebook_number, assignment_number = nil)
+      data = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}")
       if assignment_number.nil?
-      models=[]
-      data.each do |assignment_data|
-        models << AeriesNetApi::Models::Assignment.new(assignment_data)
-      end
-      models
+        models = []
+        data.each do |assignment_data|
+          models << AeriesNetApi::Models::Assignment.new(assignment_data)
+        end
+        models
       else
         raise "Assignment #{assignment_number} doesn't exist for gradebook #{gradebook_number}" if data.nil?
         AeriesNetApi::Models::Assignment.new(data)
       end
-
     end
 
     # Get final marks for a given gradebook number
@@ -273,8 +273,8 @@ module AeriesNetApi
     # Returns
     # - An array of FinalMark objects.
     def final_marks(gradebook_number)
-      data  = get_data("api/v2/gradebooks/#{gradebook_number}/FinalMarks")
-      models=[]
+      data   = get_data("api/v2/gradebooks/#{gradebook_number}/FinalMarks")
+      models = []
       # Aeries returns an array filled with nil for an invalid gradebook number
       return models if data.empty? || data.first.nil?
       data.each do |item_data|
@@ -292,10 +292,10 @@ module AeriesNetApi
     # Returns array of GPA.
     # Results are always returned in the form of an array because often students have multiple
     # records in a district if they are concurrently enrolled or have switched between schools during the school year.
-    def gpas(school_code, student_id=nil)
-      data  =get_data("api/schools/#{school_code}/gpas/#{student_id}")
+    def gpas(school_code, student_id = nil)
+      data   = get_data("api/schools/#{school_code}/gpas/#{student_id}")
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
-      models=[]
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::GPA.new(item_data)
       end
@@ -309,11 +309,11 @@ module AeriesNetApi
     #               or you pass a 0 (zero) instead, all programs for all students for the given school will be returned.
     #
     # Returns array of StudentProgram.
-    def student_programs(school_code, student_id=nil)
+    def student_programs(school_code, student_id = nil)
       student_id ||= 0
-      data       =get_data("api/v1/schools/#{school_code}/students/#{student_id}/programs")
+      data       = get_data("api/v1/schools/#{school_code}/students/#{student_id}/programs")
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
-      models     =[]
+      models     = []
       data.each do |item_data|
         models << AeriesNetApi::Models::StudentProgram.new(item_data)
       end
@@ -332,8 +332,8 @@ module AeriesNetApi
     #
     # Returns array of Code.
     def codes(table_code, field_code)
-      data  = get_data("api/codes/#{table_code}/#{field_code}")
-      models=[]
+      data   = get_data("api/codes/#{table_code}/#{field_code}")
+      models = []
       data.each do |item_data|
         models << AeriesNetApi::Models::Code.new(item_data)
       end
@@ -349,18 +349,18 @@ module AeriesNetApi
     # Returns
     # - An array of GradebookStudent objects if student_id is ommited.
     # - A single GradebookStudent object if student_id is passed.
-    def gradebooks_students(gradebook_number, gradebook_term_code, student_id=nil)
+    def gradebooks_students(gradebook_number, gradebook_term_code, student_id = nil)
       data = get_data("api/v2/gradebooks/#{gradebook_number}/#{gradebook_term_code}/students/#{student_id}")
       if student_id.nil?
-        models=[]
+        models = []
         data.each do |item_data|
           models << AeriesNetApi::Models::GradebookStudent.new(item_data)
         end
         models
       else
-        student=AeriesNetApi::Models::GradebookStudent.new(data)
-        raise RuntimeError, "Invalid student_id #{student_id} for gradebook #{gradebook_number}, " \
-            "term code #{ gradebook_term_code}" if student.permanent_id != student_id
+        student = AeriesNetApi::Models::GradebookStudent.new(data)
+        raise "Invalid student_id #{student_id} for gradebook #{gradebook_number}, " \
+            "term code #{gradebook_term_code}" if student.permanent_id != student_id
         student
       end
     end
@@ -373,26 +373,22 @@ module AeriesNetApi
     # Returns
     # An array of AssignmentScore objects.
     def assignments_scores(gradebook_number, assignment_number)
-      begin
-        data  = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/scores")
-        models=[]
-        # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
-        data.each do |assignment_data|
-          models << AeriesNetApi::Models::AssignmentScore.new(assignment_data)
-        end
-        models
-      rescue => e
-        # Trap error when an invalid gradebook_number or assignmen_number is given
-        # Aeries is sending a 500 status error with a long description including following text.
-        if e.message =~ /500/ && e.message =~ /Object reference not set to an instance of an object/
-          [] # return a blank array
-        else
-          raise # raise trapped exception
-        end
+      data   = get_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/scores")
+      models = []
+      # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
+      data.each do |assignment_data|
+        models << AeriesNetApi::Models::AssignmentScore.new(assignment_data)
+      end
+      models
+    rescue => e
+      # Trap error when an invalid gradebook_number or assignmen_number is given
+      # Aeries is sending a 500 status error with a long description including following text.
+      if e.message =~ /500/ && e.message =~ /Object reference not set to an instance of an object/
+        [] # return a blank array
+      else
+        raise # raise trapped exception
       end
     end
-
-
 
     # Update assignments scores for a given gradebook number/assignment_number
     # Parameters:
@@ -401,13 +397,15 @@ module AeriesNetApi
     # assignment_scores   - required.  Array of AeriesNetApi::Update::AssignmentScoreUpdate
     # Returns
     # An array of AssignmentScore objects.
-    def update_gradebook_scores(gradebook_number, assignment_number, assignment_scores )
+    def update_gradebook_scores(gradebook_number, assignment_number, assignment_scores)
       raise ArgumentError unless assignment_scores.is_a?(Array)
-      assignment_scores.each_with_index {|item,i| raise ArgumentError, "Invalid element(#{i}) in array: #{item.inspect}, " \
-      'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
-       item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate }
-      data  = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores",assignment_scores.to_json)
-      models=[]
+      assignment_scores.each_with_index do |item, i|
+        raise ArgumentError, "Invalid element(#{i}) in array: #{item.inspect}, " \
+        'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
+         item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate
+      end
+      data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.to_json)
+      models = []
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       data.each do |assignment_data|
         models << AeriesNetApi::Models::AssignmentScore.new(assignment_data)
@@ -424,13 +422,13 @@ module AeriesNetApi
     # Returns
     # A hash contained JSON data parsed.
     def get_data(endpoint)
-      response=@connection.get do |req|
+      response = @connection.get do |req|
         req.url endpoint
         req.options.timeout      = 120 # read timeout in seconds
         req.options.open_timeout = 60 # open timeout in seconds
       end
-      raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status==200
-      raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match /json/
+      raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
+      raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
       JSON.parse(response.body)
     end
 
@@ -441,15 +439,15 @@ module AeriesNetApi
     # Returns
     # ???
     def post_data(endpoint, body_content)
-      response=@connection.post do |req|
+      response = @connection.post do |req|
         req.url endpoint
-        req.options.timeout      = 120 # read timeout in seconds
-        req.options.open_timeout = 60 # open timeout in seconds
+        req.options.timeout         = 120 # read timeout in seconds
+        req.options.open_timeout    = 60 # open timeout in seconds
         req.headers['Content-Type'] = 'application/json'
-        req.body = body_content
+        req.body                    = body_content
       end
-      raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status==200
-      raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match /json/
+      raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
+      raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
       JSON.parse(response.body)
     end
 
@@ -458,14 +456,12 @@ module AeriesNetApi
     # certificate - Aeries certificate, case sensitive
     # url         - Aeries
     def load_configuration_file
-      begin
-        raw_config             = File.read(File.join(Dir.pwd, AeriesNetApi::Connection::CONFIGURATION_FILE))
-        config                 = YAML.load(raw_config)
-        self.aeries_certificate=config['certificate'] if self.aeries_certificate.blank?
-        self.aeries_url        =config['url'] if self.aeries_url.blank?
-      rescue Errno::ENOENT => e
-        raise "Couldn't read configuration file #{AeriesNetApi::Connection::CONFIGURATION_FILE}: #{e.message}"
-      end
+      raw_config              = File.read(File.join(Dir.pwd, AeriesNetApi::Connection::CONFIGURATION_FILE))
+      config                  = YAML.load(raw_config)
+      self.aeries_certificate = config['certificate'] if aeries_certificate.blank?
+      self.aeries_url         = config['url'] if aeries_url.blank?
+    rescue Errno::ENOENT => e
+      raise "Couldn't read configuration file #{AeriesNetApi::Connection::CONFIGURATION_FILE}: #{e.message}"
     end
   end
 end
