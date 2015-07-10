@@ -4,7 +4,6 @@ guard "bundler" do
 end
 
 group :red_green_refactor, :halt_on_fail => true do
-=begin
   guard "rspec", :cmd => "bundle exec rspec" do
     watch(%r{^spec/.+_spec\.rb$})
     watch(%r{^spec/spec_helper.rb$}) { "spec" }
@@ -18,7 +17,7 @@ group :red_green_refactor, :halt_on_fail => true do
       f
     end
   end
-=end
+
   guard :rubocop, :cmd => "bundle exec rubocop", :keep_failed => false do
     watch(/.+\.rb$/)
     watch(/.+\.gemspec$/)
