@@ -12,3 +12,5 @@ Metrics/AbcSize:
   Max: 35
 Metrics/ClassLength:
   Max: 300
+Style/NumericLiterals:
+  Enabled: false
