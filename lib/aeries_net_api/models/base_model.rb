@@ -18,7 +18,7 @@ module AeriesNetApi
         return_list = aeries_attributes.map { |attribute| "#{underscore(attribute)}=".to_sym }
         return_list.each do |attribute|
           # removes '=' from attribute name
-          attr_accessor attribute[0..-2]
+          attr_accessor attribute.to_s[0..-2]
         end
         return_list
       end
@@ -33,7 +33,7 @@ module AeriesNetApi
       def model_attributes(setters_list)
         attributes = {}
         setters_list.each do |setter|
-          attribute = setter[0..-2] # get rid of =
+          attribute = setter.to_s[0..-2] # get rid of =
           value = send(attribute)
           attributes[attribute.to_sym] = value
         end
@@ -57,10 +57,7 @@ module AeriesNetApi
       # Return
       # Word converted to snake case
       def self.underscore(camel_case_word)
-        camel_case_word.gsub(/::/, '/')
-          .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-          .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-          .tr('-', '_').downcase
+        camel_case_word.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').gsub(/([a-z\d])([A-Z])/, '\1_\2').tr('-', '_').downcase
       end
     end
   end
