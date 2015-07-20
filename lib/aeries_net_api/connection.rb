@@ -425,8 +425,8 @@ module AeriesNetApi
     def get_data(endpoint)
       response = @connection.get do |req|
         req.url endpoint
-        req.options.timeout      = 120 # read timeout in seconds
-        req.options.open_timeout = 60 # open timeout in seconds
+        req.options[:timeout]      = 120 # read timeout in seconds
+        req.options[:open_timeout] = 60 # open timeout in seconds
       end
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
       raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
@@ -442,8 +442,8 @@ module AeriesNetApi
     def post_data(endpoint, body_content)
       response = @connection.post do |req|
         req.url endpoint
-        req.options.timeout         = 120 # read timeout in seconds
-        req.options.open_timeout    = 60 # open timeout in seconds
+        req.options[:timeout]         = 120 # read timeout in seconds
+        req.options[:open_timeout]    = 60 # open timeout in seconds
         req.headers['Content-Type'] = 'application/json'
         req.body                    = body_content
       end
