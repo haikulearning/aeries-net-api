@@ -9,3 +9,5 @@ group :guard do
   gem 'guard-rubocop'
   gem 'rb-fsevent'
 end
+
+gem 'simplecov', :require => false, :group => :test
