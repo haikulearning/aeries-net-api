@@ -10,3 +10,6 @@ in current working directory and loads parameters from keys 'url' and/or 'certif
 
 1. Call methods from connection instance to get instances or arrays from different AeriesNetApi::Models, that correspond to information
 retrieved from Aeries API endpoints.  See AeriesNetApi::Connection for a list of methods.
+
+Note:
+For Ruby versions prior to 1.9.3, json gem must be installed.
