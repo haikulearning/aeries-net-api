@@ -3,22 +3,22 @@ module AeriesNetApi
     # Class to represent information to be sent to Aeries to update Gradebook Assignment Standard Scores
     class AssignmentStandardScoreUpdate
       # Either this field or the academic_benchmark_id field must be populated. This needs to match information originally
-      # found in the "Assignment" object.
+      # found in the "Assignment" object.<br>
       # Type: String
       attr_accessor :aeries_standard_id
 
       # Either this field or the aeries_standard_id field must be populated. This needs to match information originally
-      # found in the "Assignment" object.
+      # found in the "Assignment" object.<br>
       # Type: String
       attr_accessor :academic_benchmark_id
 
-      # The number of questions (or points) earned on this standard, within the given assignment. Handles up to
-      # 4 decimal places.
-      # Type: Signed Decimal
+      # The number of questions (or points) earned on this standard, within the given assignment.<br>
+      # Type: Signed Decimal. Handles up to 4 decimal places.
       attr_accessor :number_correct
 
       # Creates a new instance
-      # Parameters: Hash with these optional keys: aeries_standard_id, academic_benchmark_id, number_correct
+      # [Parameters]
+      # - Hash with these optional keys: aeries_standard_id, academic_benchmark_id, number_correct
       def initialize(attributes = {})
         self.aeries_standard_id     = attributes.delete(:aeries_standard_id)
         self.academic_benchmark_id  = attributes.delete(:academic_benchmark_id)

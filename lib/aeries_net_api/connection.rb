@@ -384,7 +384,7 @@ module AeriesNetApi
       end
     end
 
-    # Update assignments scores for a given gradebook number/assignment_number
+    # \Update assignments scores for a given gradebook number/assignment_number
     # [Parameters]
     # - gradebook_number    - required.  The specific Aeries Gradebook Number.
     # - assignment_number   - required.  The specific Assignment Number.
