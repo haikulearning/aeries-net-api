@@ -1,0 +1,3 @@
+This is command required to generate rdoc documentation:
+rdoc -U  --force-output --main=README.md  README.md lib
+
