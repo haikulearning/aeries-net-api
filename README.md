@@ -4,7 +4,7 @@ A ruby gem for connecting to the [Aeries.net API](http://www.aeries.com/download
 ### Usage:
 
 1. Create an instance of **AeriesNetApi::Connection**.  This class constructor expects a hash with optional parameters
-**certificate** and/or **url**.
+**certificate** and/or **url**.  See AeriesNetApi::Connection#new for debug options.
 If any of these parameters is missing, class looks for configuration file **'aeries_net_api_config.yml'**
 in current working directory and loads parameters from keys 'url' and/or 'certificate'
 

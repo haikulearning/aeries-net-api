@@ -17,21 +17,38 @@ module AeriesNetApi
     # A hash with following parameters
     # - certificate  - (Optional) Aeries security certificate
     # - url          - (Optional)Aeries REST API url.
+    # - debug        - (Optional) boolean flag to log http requests to STDOUT<br>
+    #   DEBUG environment variable takes precedence over this parameter.  Set DEBUG=1 to
+    #   activate debug or DEBUG=0 to turn it off.
     # Any other  parameter raises an error.<br>
     # If any of these parameters is missing, program looks for configuration file 'aeries_net_api_config.yml'
     # in current working directory and loads parameters from keys 'url' and/or 'certificate'
     def initialize(connection_parameters = {})
       self.aeries_certificate = connection_parameters.delete(:certificate)
       self.aeries_url         = connection_parameters.delete(:url)
+      @debug                  = connection_parameters.delete(:debug)
       raise ArgumentError, "Invalid parameter(s): #{connection_parameters.keys.join(', ')}" if connection_parameters.any?
       load_configuration_file if aeries_certificate.blank? || aeries_url.blank?
       raise ArgumentError, 'Please supply :certificate parameter' if aeries_certificate.nil?
       raise ArgumentError, 'Please supply :url parameter' if aeries_url.nil?
+      # Only changes debug setting if DEBUG env variable is present
+      @debug = false if @debug.nil?
+      case ENV['DEBUG']
+      when '1'
+        @debug = true
+      when '0'
+        @debug = false
+      end
       @connection =
           Faraday::Connection.new(aeries_url,
                                   :headers => { :'AERIES-CERT' => aeries_certificate,
                                                 :accept        => 'application/json, text/html, application/xhtml+xml, */*' },
                                   :ssl     => { :verify => false })
+    end
+
+    # Returns debug setting
+    def debug?
+      @debug
     end
 
     # Get school(s) information.
@@ -396,7 +413,7 @@ module AeriesNetApi
       assignment_scores.each_with_index do |item, i|
         raise ArgumentError, "Invalid element(#{i}) in array: #{item.inspect}, " \
         'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
-         item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate
+             item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate
       end
       data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.to_json)
       models = []
@@ -415,13 +432,17 @@ module AeriesNetApi
     # [Returns]
     # - A hash containing JSON data parsed.
     def get_data(endpoint)
+      puts "AeriesNetAppi::Connection#get_data endpoint=#{endpoint}, method=GET" if debug?
       response = @connection.get do |req|
         req.url endpoint
         req.options[:timeout]      = 120 # read timeout in seconds
         req.options[:open_timeout] = 60 # open timeout in seconds
       end
+      puts "AeriesNetAppi::Connection#get_data response.status=#{response.status}" if debug?
+      puts "AeriesNetAppi::Connection#get_data response.headers=#{response.headers.inspect}" if debug?
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
       raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
+      puts "AeriesNetAppi::Connection#get_data response.body=#{response.body}" if debug?
       JSON.parse(response.body)
     end
 
@@ -432,15 +453,19 @@ module AeriesNetApi
     # [Returns]
     # - An array of AeriesNetApi::Models::AssignmentScore objects including those updated.
     def post_data(endpoint, body_content)
+      puts "AeriesNetAppi::Connection#post_data endpoint=#{endpoint}, method=POST" if debug?
       response = @connection.post do |req|
         req.url endpoint
-        req.options[:timeout]         = 120 # read timeout in seconds
-        req.options[:open_timeout]    = 60 # open timeout in seconds
+        req.options[:timeout]       = 120 # read timeout in seconds
+        req.options[:open_timeout]  = 60 # open timeout in seconds
         req.headers['Content-Type'] = 'application/json'
         req.body                    = body_content
       end
+      puts "AeriesNetAppi::Connection#post_data response.status=#{response.status}" if debug?
+      puts "AeriesNetAppi::Connection#post_data response.headers=#{response.headers.inspect}" if debug?
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
       raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
+      puts "AeriesNetAppi::Connection#post_data response.body=#{response.body}" if debug?
       JSON.parse(response.body)
     end
 

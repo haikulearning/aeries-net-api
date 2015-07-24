@@ -1,4 +1,5 @@
 module AeriesNetApi
+  # Models used for update.
   module Update
     # Class to represent information to be sent to Aeries to update Gradebook Assignment Standard Scores
     class AssignmentStandardScoreUpdate

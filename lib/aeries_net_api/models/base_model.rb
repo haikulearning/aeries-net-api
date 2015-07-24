@@ -1,4 +1,6 @@
+# Main module
 module AeriesNetApi
+  # Models to be created using Aeries info
   module Models
     # Base class for al Models.
     class BaseModel
