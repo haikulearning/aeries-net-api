@@ -2,16 +2,17 @@ module AeriesNetApi
   module Update
     # Class to represent information to be sent to Aeries to update Gradebook Assignment Scores
     class AssignmentScoreUpdate
-      # Student District Permanent ID Number.
+      # Student District Permanent ID Number.<br>
       # Type: Unsigned integer
       attr_accessor :permanent_id
 
-      # The number of questions (or points) earned on this assignment. Handles up to 4 decimal places. Do not populate
-      # if StandardScores are being sent.
-      # Type: Signed decimal
+      # The number of questions (or points) earned on this assignment. Do not populate
+      # if standard_scores are being sent.<br>
+      # Type: Signed decimal. Handles up to 4 decimal places
       attr_accessor :number_correct
 
-      # Only populate if you really want to put in a specific value. Otherwise, Aeries will automatically use the Due Date of the assignment.
+      # Only populate if you really want to put in a specific value.
+      # Otherwise, Aeries will automatically use the Due Date of the assignment.<br>
       # Type: Date
       attr_accessor :date_completed
 
@@ -19,7 +20,8 @@ module AeriesNetApi
       attr_accessor :standard_scores
 
       # Creates a new instance
-      # Parameters: Hash with these optional keys: permanent_id, number_correct, date_completed, standard_scores
+      # [Parameters]
+      # - Hash with these optional keys: permanent_id, number_correct, date_completed, standard_scores
       def initialize(attributes = {})
         self.permanent_id    = attributes.delete(:permanent_id)
         self.number_correct  = attributes.delete(:number_correct)

@@ -4,9 +4,10 @@ describe AeriesNetApi::Connection do
   describe 'constructor' do
     context 'right parameters' do
       it 'should set connection parameters' do
-        connection = AeriesNetApi::Connection.new(:url => 'my_site', :certificate => 'abc')
+        connection = AeriesNetApi::Connection.new(:debug => true, :url => 'my_site', :certificate => 'abc')
         expect(connection.aeries_certificate).to eq 'abc'
         expect(connection.aeries_url).to eq 'my_site'
+        expect(connection.debug?).to be true
       end
     end
 
@@ -32,6 +33,40 @@ describe AeriesNetApi::Connection do
         connection = AeriesNetApi::Connection.new(:url => 'my_site')
         expect(connection.aeries_certificate).not_to be_empty
         expect(connection.aeries_url).to eql 'my_site'
+      end
+    end
+
+    context 'debug settings' do
+      context 'missing DEBUG env variable' do
+        it 'should set debug if debug parameter present' do
+          connection = AeriesNetApi::Connection.new(:debug => true)
+          expect(connection.debug?).to be true
+        end
+
+        it 'debug? should be false if debug parameter missing' do
+          connection = AeriesNetApi::Connection.new
+          expect(connection.debug?).to be false
+        end
+      end
+
+      context 'DEBUG env variable set' do
+        it 'should not set debug if DEBUG=0' do
+          previous = ENV['DEBUG']
+          ENV['DEBUG'] = '0'
+          connection = AeriesNetApi::Connection.new(:debug => true)
+          expect(connection.debug?).to be false
+          ENV['DEBUG'] = previous
+        end
+
+        it 'should set debug if DEBUG=1' do
+          previous = ENV['DEBUG']
+          ENV['DEBUG'] = '1'
+          connection = AeriesNetApi::Connection.new(:debug => false)
+          expect(connection.debug?).to be true
+          connection = AeriesNetApi::Connection.new
+          expect(connection.debug?).to be true
+          ENV['DEBUG'] = previous
+        end
       end
     end
   end
@@ -502,12 +537,11 @@ describe AeriesNetApi::Connection do
         scores_list    = connection.assignments_scores(gradebook_number, assignment_number)
         score          = scores_list.first
         number_correct = Random.new.rand(1.00..5.00).round(4)
-        puts number_correct
-        item         = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id   => score.permanent_id,
-                                                                       :number_correct => number_correct,
-                                                                       :date_completed => Date.today)
-        updated_list = connection.update_gradebook_scores(gradebook_number, assignment_number, [item])
-        updated      = updated_list.first
+        item           = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id   => score.permanent_id,
+                                                                         :number_correct => number_correct,
+                                                                         :date_completed => Date.today)
+        updated_list   = connection.update_gradebook_scores(gradebook_number, assignment_number, [item])
+        updated        = updated_list.first
         expect(updated.permanent_id).to eql(score.permanent_id)
         expect(updated.number_correct).to eql(number_correct)
       end
@@ -527,8 +561,8 @@ describe AeriesNetApi::Connection do
           assignment = connection.assignments(gradebook_number, assignment_number)
           puts assignment.inspect
           number_correct  = Random.new.rand(1.00..5.00).round(4)
-          standard_scores = [AeriesNetApi::Update::AssignmentStandardScoreUpdate.new(
-            :aeries_standard_id => assignment.standards.first.standard_id, :number_correct => number_correct)]
+          standard_scores = [AeriesNetApi::Update::AssignmentStandardScoreUpdate.new(:aeries_standard_id => assignment.standards.first.standard_id,
+                                                                                     :number_correct => number_correct)]
           item            = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id    => score.permanent_id,
                                                                             :date_completed  => Date.today,
                                                                             :standard_scores => standard_scores)

@@ -49,6 +49,11 @@ module AeriesNetApi
         self.terms = terms
       end
 
+      # Compares this Gradebook against a received one for a logical equality
+      # [Parameters]
+      # - An AeriesNetApi::Models::Gradebook to be compared agains this one.
+      # [Returns]
+      # - true if both models have same gradebook number
       def eql?(other)
         return false unless other.instance_of?(self.class)
         gradebook_number.eql? other.gradebook_number

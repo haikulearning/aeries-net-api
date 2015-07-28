@@ -2,6 +2,7 @@
 module AeriesNetApi
   # Adds useful methods to Object class
   module Support
+    # Overrides parent#included.  Used to avoid re-define these methods when running under Rails
     def self.included(base)
       unless base.respond_to?(:blank?)
         base.class_eval do
