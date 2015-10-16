@@ -532,10 +532,12 @@ describe AeriesNetApi::Connection do
         end.to raise_error(ArgumentError)
       end
 
-      it 'should update score using only AssignmentScoreUpdate object ' do
+      it 'should update score using only AssignmentScoreUpdate object ', :focus => true do
         # Get current data
         scores_list    = connection.assignments_scores(gradebook_number, assignment_number)
         score          = scores_list.first
+        puts score.inspect
+        
         number_correct = Random.new.rand(1.00..5.00).round(4)
         item           = AeriesNetApi::Update::AssignmentScoreUpdate.new(:permanent_id   => score.permanent_id,
                                                                          :number_correct => number_correct,

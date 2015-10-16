@@ -32,11 +32,15 @@ module AeriesNetApi
 
       # Overrides to_json method to use Aeries name for objects
       def to_json(_options = {})
-        json_hash = { 'PermanentId' => permanent_id }
-        json_hash['NumberCorrect'] = number_correct unless number_correct.nil?
-        json_hash['DateCompleted'] = date_completed.to_s unless date_completed.nil?
-        json_hash['StandardScores'] = standard_scores
-        json_hash.to_json
+        to_aeries_payload.to_json
+      end
+
+      def to_aeries_payload
+        hash = { 'PermanentId' => permanent_id }
+        hash['NumberCorrect'] = number_correct unless number_correct.nil?
+        hash['DateCompleted'] = date_completed.to_s unless date_completed.nil?
+        hash['StandardScores'] = standard_scores
+        hash
       end
     end
   end
