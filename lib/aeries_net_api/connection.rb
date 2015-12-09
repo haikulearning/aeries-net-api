@@ -443,7 +443,11 @@ module AeriesNetApi
       raise "Error #{response.status} accessing Aeries site: #{response.body}" unless response.status == 200
       raise "Invalid response type received: #{response.headers['content-type']}" unless response.headers['content-type'].match(/json/)
       puts "AeriesNetAppi::Connection#get_data response.body=#{response.body}" if debug?
-      JSON.parse(response.body)
+      begin
+        JSON.parse(response.body)
+      rescue => e
+        nil
+      end
     end
 
     # Post update data toAeries site
