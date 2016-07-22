@@ -248,6 +248,21 @@ module AeriesNetApi
       models
     end
 
+    # Get gradebooks for a given teacher
+    # [Parameters]
+    # - school_code    - required.  The Aeries staff ID.
+    #
+    # [Returns]
+    # - An array of AeriesNetApi::Models::Gradebook objects.
+    def gradebooks_for_teacher(staff_id)
+      data   = get_data("api/v2/staff/#{staff_id}/gradebooks")
+      models = []
+      data.each do |gradebook_data|
+        models << AeriesNetApi::Models::Gradebook.new(gradebook_data)
+      end
+      models
+    end
+
     # Get a gradebook for a given gradebook number
     # [Parameters]
     # - gradebook_number - required.  The specific Aeries Gradebook Number.
