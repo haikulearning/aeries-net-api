@@ -3,7 +3,7 @@ module AeriesNetApi
     # Class to represent Assignment information extracted from Aeries site.
     class Assignment < AeriesNetApi::Models::BaseModel
       # List of attributes to be extracted from Aeries site.
-      @@aeries_attributes_list = %w(GradebookNumber AssignmentNumber Description AssignmentCategory DateAssigned DateDue
+      @@aeries_attributes_list = %w(UniqueID ExternalID GradebookNumber AssignmentNumber Description AssignmentCategory DateAssigned DateDue
                                     NumberCorrectPossible PointsPossible GradingCompleted Comment DueTime
                                     AllowStudentDropBox VisibleToParents ScoresVisibleToParents
                                     FormativeSummativeIndicator AeriesAnalyticsExamID AeriesAnalyticsExamTestAdmin
