@@ -294,6 +294,21 @@ module AeriesNetApi
       end
     end
 
+    # Create assignment(s) for a given gradebook
+    # [Parameters]
+    # - gradebook_number  - required.  The specific Aeries Gradebook Number.
+    # - assignment - required.  The assignment details, at least a "Description" is required
+    # [Returns]
+    # - An array of AeriesNetApi::Models::Assignment objects, but only those that were added by the Insert request
+    def insert_assignment(gradebook_number, assignment)
+      data = post_data("api/v3/gradebooks/#{gradebook_number}/InsertAssignment", assignment.to_json)
+      models = []
+      data.each do |assignment_data|
+        models << AeriesNetApi::Models::Assignment.new(assignment_data)
+      end
+      models
+    end
+
     # Get final marks for a given gradebook number
     # [Parameters]
     # - gradebook_number - required.  The specific Aeries Gradebook Number.
