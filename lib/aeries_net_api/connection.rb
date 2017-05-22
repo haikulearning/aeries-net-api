@@ -445,7 +445,7 @@ module AeriesNetApi
         'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
              item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate
       end
-      data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.map{|sc| sc.to_aeries_payload}.to_json)
+      data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.map(&:to_aeries_payload).to_json)
       models = []
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       data.each do |assignment_data|
@@ -475,7 +475,7 @@ module AeriesNetApi
       puts "AeriesNetAppi::Connection#get_data response.body=#{response.body}" if debug?
       begin
         JSON.parse(response.body)
-      rescue => e
+      rescue
         nil
       end
     end
