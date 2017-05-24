@@ -340,9 +340,14 @@ describe AeriesNetApi::Connection do
 
     context 'assignments' do
       let(:list) { connection.assignments(gradebook_number) }
+      let(:assign) {{ "Description" => "Only 1 Gradebook Test 1" }}
 
       it 'should include an assignments method' do
         expect(connection.respond_to?(:assignments)).to be true
+      end
+
+      it 'should include an insert assignment method' do
+        expect(connection.respond_to?(:insert_assignment)).to be true
       end
 
       it 'should return an array of Assignment objects for a given gradebook number' do
@@ -350,8 +355,19 @@ describe AeriesNetApi::Connection do
         expect(list.first).to be_an_instance_of(AeriesNetApi::Models::Assignment)
       end
 
+      it 'should return an array of Assignment objects for a given gradebook number when inserting assignments' do
+        insert_list = connection.insert_assignment(4366926, assign)
+        expect(insert_list).to be_an_instance_of Array
+        expect(insert_list.first).to be_an_instance_of(AeriesNetApi::Models::Assignment)
+      end
+
       it 'should include an AssignmentCategory object' do
         expect(list.first.assignment_category).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
+      end
+
+      it 'should include an AssignmentCategory object when inserting assignments' do
+        insert_list = connection.insert_assignment(4366926, assign)
+        expect(insert_list.first.assignment_category).to be_an_instance_of(AeriesNetApi::Models::AssignmentCategory)
       end
 
       it 'should include an AssignmentStandard object array ' do
