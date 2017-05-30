@@ -248,6 +248,21 @@ module AeriesNetApi
       models
     end
 
+    # Get gradebooks for a given teacher
+    # [Parameters]
+    # - school_code    - required.  The Aeries staff ID.
+    #
+    # [Returns]
+    # - An array of AeriesNetApi::Models::Gradebook objects.
+    def gradebooks_for_teacher(staff_id)
+      data   = get_data("api/v2/staff/#{staff_id}/gradebooks")
+      models = []
+      data.each do |gradebook_data|
+        models << AeriesNetApi::Models::Gradebook.new(gradebook_data)
+      end
+      models
+    end
+
     # Get a gradebook for a given gradebook number
     # [Parameters]
     # - gradebook_number - required.  The specific Aeries Gradebook Number.
@@ -277,6 +292,21 @@ module AeriesNetApi
         raise "Assignment #{assignment_number} doesn't exist for gradebook #{gradebook_number}" if data.nil?
         AeriesNetApi::Models::Assignment.new(data)
       end
+    end
+
+    # Create assignment(s) for a given gradebook
+    # [Parameters]
+    # - gradebook_number  - required.  The specific Aeries Gradebook Number.
+    # - assignment - required.  The assignment details, at least a "Description" is required
+    # [Returns]
+    # - An array of AeriesNetApi::Models::Assignment objects, but only those that were added by the Insert request
+    def insert_assignment(gradebook_number, assignment)
+      data = post_data("api/v3/gradebooks/#{gradebook_number}/InsertAssignment", assignment.to_json)
+      models = []
+      data.each do |assignment_data|
+        models << AeriesNetApi::Models::Assignment.new(assignment_data)
+      end
+      models
     end
 
     # Get final marks for a given gradebook number
@@ -415,7 +445,7 @@ module AeriesNetApi
         'it should be an AeriesNetApi::Update::AssignmentScoreUpdate object' unless \
              item.instance_of? AeriesNetApi::Update::AssignmentScoreUpdate
       end
-      data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.map{|sc| sc.to_aeries_payload}.to_json)
+      data   = post_data("api/v2/gradebooks/#{gradebook_number}/assignments/#{assignment_number}/UpdateScores", assignment_scores.map(&:to_aeries_payload).to_json)
       models = []
       # puts data.first.keys.join(' ') if data.present? # && section_number.present? # To extract current Aeries attributes names
       data.each do |assignment_data|
@@ -445,7 +475,7 @@ module AeriesNetApi
       puts "AeriesNetAppi::Connection#get_data response.body=#{response.body}" if debug?
       begin
         JSON.parse(response.body)
-      rescue => e
+      rescue
         nil
       end
     end
